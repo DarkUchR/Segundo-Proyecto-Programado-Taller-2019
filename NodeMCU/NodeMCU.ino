@@ -58,7 +58,7 @@ const long interval = 100;
  * data = B11111111 -> todas apagadas
  * data = B00001111 -> depende de LSBFIRST o MSBFIRST la mitad encendida y la otra mitad apagada
  */
-#define ab  D6 
+#define ab  D6
 #define clk D8
 /*
  * Variables para controlar los motores.
@@ -78,8 +78,8 @@ const long interval = 100;
 #define In1 D3 // D4 en HIGH : retroceder
 #define In2 D2 // D3 en HIGH : avanzar
 #define In3 D1 // 
-#define EnB D1 // 
-#define In4 D5 // 0 para ir hacia adelante
+#define EnB D5 // 
+#define In4 D0// 0 para ir hacia adelante
 
 
 
@@ -255,21 +255,39 @@ String implementar(String llave, String valor){
     Serial.print("Move....: ");
     Serial.println(valor);
     //# AGREGAR PARA CÓDIGO PARA MOVER EL CARRO HACIA DELANTE Y ATRAS
+    if (pwm >0){
+        digitalWrite(In1, LOW); 
+        digitalWrite(In2, HIGH); 
+    }else{
+        digitalWrite(In2, LOW); 
+        digitalWrite(In1, HIGH); 
+    }
+    if(abs(pwm)<1023){
+      analogWrite(EnA,abs(pwm))
+    }else{
+      analogWrite(EnA,1023)
+    }
   }
  
   else if(llave == "dir"){
     switch (valor.toInt()){
       case 1:
         Serial.println("Girando derecha");
-        //# AGREGAR CÓDIGO PARA GIRAR DERECHA
+        digitalWrite(In3, LOW); 
+        digitalWrite(In4, HIGH); 
+        digitalWrite(EnB, HIGH); 
         break;
       case -1:
         Serial.println("Girando izquierda");
         //# AGREGAR CÓDIGO PARA GIRAR IZQUIERDA
+        digitalWrite(In3, HIGH); 
+        digitalWrite(In4, LOW); 
+        digitalWrite(EnB, HIGH); 
         break;
        default:
         Serial.println("directo");
         //# AGREGAR CÓDIGO PARA NO GIRAR 
+        digitalWrite(EnB, LOW); 
         break;
     }
   }
