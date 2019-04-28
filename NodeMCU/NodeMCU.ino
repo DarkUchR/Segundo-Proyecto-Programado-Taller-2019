@@ -233,6 +233,9 @@ void procesar(String input, String * output){
     else if(comando == "sense"){
       *output = getSense();         
     }
+    else if(commando == "blvl"){
+        
+    }
     /**
      * ## AGREGAR COMPARACIONES PARA COMANDOS SIN VALOR
      * EJEM: else if (comando == CIRCLE) {
@@ -346,8 +349,8 @@ String implementar(String llave, String valor){
  */
 String getSense(){
   //# EDITAR CÓDIGO PARA LEER LOS VALORES DESEADOS
-  int batteryLvl = analogRead(bat);
-  int light = digitalRead(ldr);
+  int batteryLvl = 100*analogRead(bat)/1023;
+  int light = 100*analogRead(ldr)/1023;
 
   // EQUIVALENTE A UTILIZAR STR.FORMAT EN PYTHON, %d -> valor decimal
   char sense [16];
