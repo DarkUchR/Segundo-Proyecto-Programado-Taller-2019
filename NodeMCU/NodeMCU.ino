@@ -87,7 +87,11 @@ const long interval = 100;
  * Variables
  */
 // #AGREGAR VARIABLES NECESARIAS 
-
+byte data = B00000000;
+const byte derecha = B10000000;
+const byte izquierda = B00000010;
+const byte traseras = B01000001;
+const byte frontales = B00110000;
 /**
  * Función de configuración.
  * Se ejecuta la primera vez que el módulo se enciende.
@@ -263,9 +267,9 @@ String implementar(String llave, String valor){
         digitalWrite(In1, HIGH); 
     }
     if(abs(pwm)<1023){
-      analogWrite(EnA,abs(pwm))
+      analogWrite(EnA,abs(pwm));
     }else{
-      analogWrite(EnA,1023)
+      analogWrite(EnA,1023);
     }
   }
  
@@ -295,24 +299,23 @@ String implementar(String llave, String valor){
     Serial.println("Cambiando Luces");
     Serial.print("valor luz: ");
     Serial.println(valor);
-    byte data = B00000000;
     //Recomendación utilizar operadores lógico de bit a bit (bitwise operators)
     switch (llave[1]){
       case 'f':
         Serial.println("Luces frontales");
-        //# AGREGAR CÓDIGO PARA ENCENDER LUCES FRONTALES
+        data=data^frontales;
         break;
       case 'b':
         Serial.println("Luces traseras");
-        //# AGREGAR CÓDIGO PARA ENCENDER O APAGAR LUCES TRASERAS
+        data=data^traseras;
         break;
       case 'l':
         Serial.println("Luces izquierda");
-        //# AGREGAR CÓDIGO PARA ENCENDER O APAGAR DIRECCIONAL IZQUIERDA
+        data=data^izquierda;
         break;
       case 'r':
         Serial.println("Luces derechas");
-        //# AGREGAR PARA CÓDIGO PARA ENCENDER O APAGAR DIRECCIONAL DERECHA
+        data=data^derecha;
         break;
       /**
        * # AGREGAR CASOS CON EL FORMATO l[caracter]:valor;
@@ -322,6 +325,7 @@ String implementar(String llave, String valor){
         Serial.println("Ninguna de las anteriores");
         
         break;
+      
     }
     //data VARIABLE QUE DEFINE CUALES LUCES SE ENCIENDEN Y CUALES SE APAGAN
     shiftOut(ab, clk, LSBFIRST, data);
