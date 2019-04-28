@@ -47,6 +47,7 @@ const long interval = 100;
  * Señal digital, lee 1 si hay luz y 0 si no hay.
  */
 #define ldr D7
+#define bat A0
 /**
  * Variables para manejar las luces con el registro de corrimiento.
  * Utilizan una función propia de Arduino llamada shiftOut.
@@ -345,8 +346,8 @@ String implementar(String llave, String valor){
  */
 String getSense(){
   //# EDITAR CÓDIGO PARA LEER LOS VALORES DESEADOS
-  int batteryLvl = -1;
-  int light = -1;
+  int batteryLvl = analogRead(bat);
+  int light = digitalRead(ldr);
 
   // EQUIVALENTE A UTILIZAR STR.FORMAT EN PYTHON, %d -> valor decimal
   char sense [16];
