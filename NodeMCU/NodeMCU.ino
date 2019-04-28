@@ -230,10 +230,28 @@ void procesar(String input, String * output){
     else if(comando == "sense"){
       *output = getSense();         
     }
-    else if(commando == "blvl"){
-        
+    else if(comando=="Infinite"){
+      girarDerecha()
+      mover(1000)
+      delay(2500)
+      girarIzquierda()
+      delay(5000)
+      girarDerecha()
+      delay(2500)
+      mover(0)
+      noGirar()
     }
-    
+    else if(comando=="ZigZag"){
+      mover(1000)
+      for(int i=0;i<3;i++){
+        girarDerecha()
+        delay(2500)
+        girarIzquierda()
+        delay(2500)
+      }      
+      mover(0)
+      noGirar()
+    }
     else{
       Serial.print("Comando no reconocido. Solo presenta llave");
       *output = "Undefined key value: " + comando+";";
@@ -243,6 +261,43 @@ void procesar(String input, String * output){
   }
 }
 
+void girarIzquierda(){
+  Serial.println("Girando izquierda");
+  //# AGREGAR CÓDIGO PARA GIRAR IZQUIERDA
+  digitalWrite(In3, HIGH); 
+  digitalWrite(In4, LOW); 
+  digitalWrite(EnB, HIGH);
+}
+void girarDerecha(){
+  Serial.println("Girando derecha");
+  digitalWrite(In3, LOW); 
+  digitalWrite(In4, HIGH); 
+  digitalWrite(EnB, HIGH); 
+}
+void noGirar(){
+  Serial.println("directo");
+  //# AGREGAR CÓDIGO PARA NO GIRAR 
+  digitalWrite(EnB, LOW);   
+}
+
+
+void mover(valor){
+  Serial.print("Move....: ");
+    Serial.println(valor);
+    //# AGREGAR PARA CÓDIGO PARA MOVER EL CARRO HACIA DELANTE Y ATRAS
+    if (valor >0){
+        digitalWrite(In1, LOW); 
+        digitalWrite(In2, HIGH); 
+    }else{
+        digitalWrite(In2, LOW); 
+        digitalWrite(In1, HIGH); 
+    }
+    if(abs(valor)<1023){
+      analogWrite(EnA,abs(valor));
+    }else{
+      analogWrite(EnA,1023);
+    }
+}
 String implementar(String llave, String valor){
   /**
    * La variable result puede cambiar para beneficio del desarrollador
@@ -252,42 +307,19 @@ String implementar(String llave, String valor){
   Serial.print("Comparing llave: ");
   Serial.println(llave);
   if(llave == "pwm"){
-    Serial.print("Move....: ");
-    Serial.println(valor);
-    //# AGREGAR PARA CÓDIGO PARA MOVER EL CARRO HACIA DELANTE Y ATRAS
-    if (pwm >0){
-        digitalWrite(In1, LOW); 
-        digitalWrite(In2, HIGH); 
-    }else{
-        digitalWrite(In2, LOW); 
-        digitalWrite(In1, HIGH); 
-    }
-    if(abs(pwm)<1023){
-      analogWrite(EnA,abs(pwm));
-    }else{
-      analogWrite(EnA,1023);
-    }
+    mover(valor)
   }
  
   else if(llave == "dir"){
     switch (valor.toInt()){
       case 1:
-        Serial.println("Girando derecha");
-        digitalWrite(In3, LOW); 
-        digitalWrite(In4, HIGH); 
-        digitalWrite(EnB, HIGH); 
+        girarDerecha();
         break;
       case -1:
-        Serial.println("Girando izquierda");
-        //# AGREGAR CÓDIGO PARA GIRAR IZQUIERDA
-        digitalWrite(In3, HIGH); 
-        digitalWrite(In4, LOW); 
-        digitalWrite(EnB, HIGH); 
+        girarIzquierda();
         break;
        default:
-        Serial.println("directo");
-        //# AGREGAR CÓDIGO PARA NO GIRAR 
-        digitalWrite(EnB, LOW); 
+        noGirar();
         break;
     }
   }
@@ -354,6 +386,23 @@ String implementar(String llave, String valor){
     }
     //data VARIABLE QUE DEFINE CUALES LUCES SE ENCIENDEN Y CUALES SE APAGAN
     shiftOut(ab, clk, LSBFIRST, data);
+  }
+  else if(llave=="Circle"){
+    if (valor==1 || valor==-1){
+      if (valor==1){
+        girarDerecha();
+      }else if(valor==-1){
+        girarIzquierda();
+      }
+      mover(1000);
+      delay(5000);
+      mover(0);
+      noGirar();
+    }  
+    else{
+      result = "Undefined key value: " + llave+";";
+      Serial.println(result);
+    }
   }
   /**
    * El comando tiene el formato correcto pero no tiene sentido para el servidor
