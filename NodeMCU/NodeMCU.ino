@@ -89,10 +89,7 @@ const long interval = 100;
  */
 // #AGREGAR VARIABLES NECESARIAS 
 byte data = B00000000;
-const byte derecha = B10000000;
-const byte izquierda = B00000010;
-const byte traseras = B01000001;
-const byte frontales = B00110000;
+
 /**
  * Función de configuración.
  * Se ejecuta la primera vez que el módulo se enciende.
@@ -236,12 +233,7 @@ void procesar(String input, String * output){
     else if(commando == "blvl"){
         
     }
-    /**
-     * ## AGREGAR COMPARACIONES PARA COMANDOS SIN VALOR
-     * EJEM: else if (comando == CIRCLE) {
-     *  
-     * } 
-     */
+    
     else{
       Serial.print("Comando no reconocido. Solo presenta llave");
       *output = "Undefined key value: " + comando+";";
@@ -299,6 +291,7 @@ String implementar(String llave, String valor){
         break;
     }
   }
+ 
   else if(llave[0] == 'l'){
     Serial.println("Cambiando Luces");
     Serial.print("valor luz: ");
@@ -307,19 +300,47 @@ String implementar(String llave, String valor){
     switch (llave[1]){
       case 'f':
         Serial.println("Luces frontales");
-        data=data^frontales;
+        if(valor==1){
+          byte frontales = B11001111;
+          data=data&frontales;
+        }
+        else if(valor==0){
+          byte frontales = B00110000;
+          data=data|frontales;
+        }
         break;
       case 'b':
         Serial.println("Luces traseras");
-        data=data^traseras;
+        if(valor==1){
+          byte traseras = B10111110;
+          data=data&traseras;
+        }
+        else if(valor==0){
+          byte traseras = B01000001;
+          data=data|traseras;
+        }
         break;
       case 'l':
         Serial.println("Luces izquierda");
-        data=data^izquierda;
+        if(valor==1){
+          byte izquierda = B11111101;
+          data=data&izquierda;
+        }
+        else if(valor==0){
+          byte izquierda = B00000010;
+          data=data|izquierda;
+        }
         break;
       case 'r':
         Serial.println("Luces derechas");
-        data=data^derecha;
+        if(valor==1){
+          byte derecha = B01111111;
+          data=data&derecha;
+        }
+        else if(valor==0){
+          byte derecha = B10000000;
+          data=data|derecha;
+        }
         break;
       /**
        * # AGREGAR CASOS CON EL FORMATO l[caracter]:valor;
