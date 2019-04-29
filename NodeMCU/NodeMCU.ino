@@ -281,7 +281,7 @@ void noGirar(){
 }
 
 
-void mover(valor){
+void mover(int valor){
   Serial.print("Move....: ");
     Serial.println(valor);
     //# AGREGAR PARA CÓDIGO PARA MOVER EL CARRO HACIA DELANTE Y ATRAS
@@ -307,7 +307,7 @@ String implementar(String llave, String valor){
   Serial.print("Comparing llave: ");
   Serial.println(llave);
   if(llave == "pwm"){
-    mover(valor)
+    mover(valor.toInt())
   }
  
   else if(llave == "dir"){
