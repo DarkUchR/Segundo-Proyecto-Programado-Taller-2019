@@ -231,26 +231,26 @@ void procesar(String input, String * output){
       *output = getSense();         
     }
     else if(comando=="Infinite"){
-      girarDerecha()
-      mover(1000)
-      delay(2500)
-      girarIzquierda()
-      delay(5000)
-      girarDerecha()
-      delay(2500)
-      mover(0)
-      noGirar()
+      girarDerecha();
+      mover(1000);
+      delay(2500);
+      girarIzquierda();
+      delay(5000);
+      girarDerecha();
+      delay(2500);
+      mover(0);
+      noGirar();
     }
     else if(comando=="ZigZag"){
-      mover(1000)
+      mover(1000);
       for(int i=0;i<3;i++){
-        girarDerecha()
-        delay(2500)
-        girarIzquierda()
-        delay(2500)
+        girarDerecha();
+        delay(2500);
+        girarIzquierda();
+        delay(2500);
       }      
-      mover(0)
-      noGirar()
+      mover(0);
+      noGirar();
     }
     else{
       Serial.print("Comando no reconocido. Solo presenta llave");
@@ -307,7 +307,7 @@ String implementar(String llave, String valor){
   Serial.print("Comparing llave: ");
   Serial.println(llave);
   if(llave == "pwm"){
-    mover(valor.toInt())
+    mover(valor.toInt());
   }
  
   else if(llave == "dir"){
@@ -323,7 +323,6 @@ String implementar(String llave, String valor){
         break;
     }
   }
- 
   else if(llave[0] == 'l'){
     Serial.println("Cambiando Luces");
     Serial.print("valor luz: ");
@@ -332,44 +331,44 @@ String implementar(String llave, String valor){
     switch (llave[1]){
       case 'f':
         Serial.println("Luces frontales");
-        if(valor==1){
+        if(valor=="1"){
           byte frontales = B11001111;
           data=data&frontales;
         }
-        else if(valor==0){
+        else if(valor=="0"){
           byte frontales = B00110000;
           data=data|frontales;
         }
         break;
       case 'b':
         Serial.println("Luces traseras");
-        if(valor==1){
+        if(valor=="1"){
           byte traseras = B10111110;
           data=data&traseras;
         }
-        else if(valor==0){
+        else if(valor=="0"){
           byte traseras = B01000001;
           data=data|traseras;
         }
         break;
       case 'l':
         Serial.println("Luces izquierda");
-        if(valor==1){
+        if(valor=="1"){
           byte izquierda = B11111101;
           data=data&izquierda;
         }
-        else if(valor==0){
+        else if(valor=="0"){
           byte izquierda = B00000010;
           data=data|izquierda;
         }
         break;
       case 'r':
         Serial.println("Luces derechas");
-        if(valor==1){
+        if(valor=="1"){
           byte derecha = B01111111;
           data=data&derecha;
         }
-        else if(valor==0){
+        else if(valor=="0"){
           byte derecha = B10000000;
           data=data|derecha;
         }
@@ -388,10 +387,10 @@ String implementar(String llave, String valor){
     shiftOut(ab, clk, LSBFIRST, data);
   }
   else if(llave=="Circle"){
-    if (valor==1 || valor==-1){
-      if (valor==1){
+    if (valor=="1" || valor=="-1"){
+      if (valor=="1"){
         girarDerecha();
-      }else if(valor==-1){
+      }else if(valor=="-1"){
         girarIzquierda();
       }
       mover(1000);
