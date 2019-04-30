@@ -27,8 +27,8 @@
  * Este servidor no funciona correctamente en las redes del TEC,
  * se recomienda crear un hotspot con el celular
  */
-const char* ssid = "WiFiCar";
-const char* password = "pass1234";
+const char* ssid = "bryan";
+const char* password = "12345678";
 
 
 // servidor con el puerto y variable con la maxima cantidad de 
@@ -46,7 +46,7 @@ const long interval = 100;
  * Pin donde está conectado el sensor de luz
  * Señal digital, lee 1 si hay luz y 0 si no hay.
  */
-#define ldr D7
+#define ldr D8
 #define bat A0
 /**
  * Variables para manejar las luces con el registro de corrimiento.
@@ -60,7 +60,7 @@ const long interval = 100;
  * data = B00001111 -> depende de LSBFIRST o MSBFIRST la mitad encendida y la otra mitad apagada
  */
 #define ab  D6
-#define clk D8
+#define clk D7
 /*
  * Variables para controlar los motores.
  * EnA y EnB son los que habilitan las salidas del driver.
@@ -88,7 +88,7 @@ const long interval = 100;
  * Variables
  */
 // #AGREGAR VARIABLES NECESARIAS 
-byte data = B00000000;
+byte data = B11111111;
 
 /**
  * Función de configuración.
@@ -332,44 +332,44 @@ String implementar(String llave, String valor){
       case 'f':
         Serial.println("Luces frontales");
         if(valor=="1"){
-          byte frontales = B11001111;
+          byte frontales = B11111110;
           data=data&frontales;
         }
         else if(valor=="0"){
-          byte frontales = B00110000;
+          byte frontales = B00000001;
           data=data|frontales;
         }
         break;
       case 'b':
         Serial.println("Luces traseras");
         if(valor=="1"){
-          byte traseras = B10111110;
+          byte traseras = B11001111;
           data=data&traseras;
         }
         else if(valor=="0"){
-          byte traseras = B01000001;
+          byte traseras = B00110000;
           data=data|traseras;
         }
         break;
       case 'l':
         Serial.println("Luces izquierda");
         if(valor=="1"){
-          byte izquierda = B11111101;
+          byte izquierda = B11011111;
           data=data&izquierda;
         }
         else if(valor=="0"){
-          byte izquierda = B00000010;
+          byte izquierda = B00100000;
           data=data|izquierda;
         }
         break;
       case 'r':
         Serial.println("Luces derechas");
         if(valor=="1"){
-          byte derecha = B01111111;
+          byte derecha = B11101111;
           data=data&derecha;
         }
         else if(valor=="0"){
-          byte derecha = B10000000;
+          byte derecha = B00010000;
           data=data|derecha;
         }
         break;
@@ -381,9 +381,12 @@ String implementar(String llave, String valor){
         Serial.println("Ninguna de las anteriores");
         
         break;
+     
       
     }
     //data VARIABLE QUE DEFINE CUALES LUCES SE ENCIENDEN Y CUALES SE APAGAN
+    Serial.println(data);
+    Serial.println(data);
     shiftOut(ab, clk, LSBFIRST, data);
   }
   else if(llave=="Circle"){
