@@ -81,7 +81,7 @@ const long interval = 100;
 #define In3 D1 // 
 #define EnB D5 // 
 #define In4 D0// 0 para ir hacia adelante
-
+#define Buzzer S3
 
 
 /**
@@ -298,37 +298,9 @@ void mover(int valor){
       analogWrite(EnA,1023);
     }
 }
-String implementar(String llave, String valor){
-  /**
-   * La variable result puede cambiar para beneficio del desarrollador
-   * Si desea obtener más información al ejecutar un comando.
-   */
-  String result="ok;";
-  Serial.print("Comparing llave: ");
-  Serial.println(llave);
-  if(llave == "pwm"){
-    mover(valor.toInt());
-  }
- 
-  else if(llave == "dir"){
-    switch (valor.toInt()){
-      case 1:
-        girarDerecha();
-        break;
-      case -1:
-        girarIzquierda();
-        break;
-       default:
-        noGirar();
-        break;
-    }
-  }
-  else if(llave[0] == 'l'){
-    Serial.println("Cambiando Luces");
-    Serial.print("valor luz: ");
-    Serial.println(valor);
-    //Recomendación utilizar operadores lógico de bit a bit (bitwise operators)
-    switch (llave[1]){
+
+void cambiarLuces(String llave,String valor){
+  switch (llave[1]){
       case 'f':
         Serial.println("Luces frontales");
         if(valor=="1"){
@@ -388,6 +360,40 @@ String implementar(String llave, String valor){
     Serial.println(data);
     Serial.println(data);
     shiftOut(ab, clk, LSBFIRST, data);
+
+}
+String implementar(String llave, String valor){
+  /**
+   * La variable result puede cambiar para beneficio del desarrollador
+   * Si desea obtener más información al ejecutar un comando.
+   */
+  String result="ok;";
+  Serial.print("Comparing llave: ");
+  Serial.println(llave);
+  if(llave == "pwm"){
+    mover(valor.toInt());
+  }
+ 
+  else if(llave == "dir"){
+    switch (valor.toInt()){
+      case 1:
+        girarDerecha();
+        break;
+      case -1:
+        girarIzquierda();
+        break;
+       default:
+        noGirar();
+        break;
+    }
+  }
+  else if(llave[0] == 'l'){
+    Serial.println("Cambiando Luces");
+    Serial.print("valor luz: ");
+    Serial.println(valor);
+    //Recomendación utilizar operadores lógico de bit a bit (bitwise operators)
+    cambiarLuces(llave,valor);
+    
   }
   else if(llave=="Circle"){
     if (valor=="1" || valor=="-1"){
