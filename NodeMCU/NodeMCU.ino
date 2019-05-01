@@ -1,15 +1,13 @@
 /*
- * Instituto TecnolÃ³gico de Costa Rica
+ * Instituto Tecnológico de Costa Rica
  * Computer Engineering
- * Taller de ProgramaciÃ³n
+ * Taller de Programación
  * 
- * Código Servidor
- * Implementación del servidor NodeMCU
  * Proyecto 2, semestre 1
  * 2019
  * 
- * Profesor: Milton Villegas Lemus
- * Autor: Santiago Gamboa RamÃ­rez
+ * Profesor: Jeff Schmidt Peralta
+ * Autor: Pablo Rojas Rodríguez, Juan Pablo Carrillo, Bryan Alfaro
  * 
  * Restricciónes: Biblioteca ESP8266WiFi instalada
  */
@@ -81,7 +79,7 @@ const long interval = 100;
 #define In3 D1 // 
 #define EnB D5 // 
 #define In4 D0// 0 para ir hacia adelante
-#define Buzzer S3
+#define Buzzer 1
 
 
 /**
@@ -111,6 +109,7 @@ void setup() {
   
   pinMode(ldr,INPUT);
 
+  pinMode(1, FUNCTION_3);
   // ip estática para el servidor
   IPAddress ip(192,168,43,200);
   IPAddress gateway(192,168,43,1);
@@ -231,22 +230,35 @@ void procesar(String input, String * output){
       *output = getSense();         
     }
     else if(comando=="Infinite"){
+      mover(0);
       girarDerecha();
+      delay(100);
       mover(1000);
       delay(2500);
+      mover(0);
       girarIzquierda();
+      delay(100);
+      mover(1000);
       delay(5000);
+      mover(0);
       girarDerecha();
+      delay(100);
+      mover(1000);
       delay(2500);
       mover(0);
       noGirar();
     }
     else if(comando=="ZigZag"){
-      mover(1000);
       for(int i=0;i<3;i++){
+        mover(0);
         girarDerecha();
+        delay(100);
+        mover(1000);
         delay(2500);
+        mover(0);
         girarIzquierda();
+        delay(100);
+        mover(1000);
         delay(2500);
       }      
       mover(0);
@@ -259,6 +271,11 @@ void procesar(String input, String * output){
     comienzo = delComa+1;
     delComa = input.indexOf(';',comienzo);
   }
+}
+
+void bocina(int frecuencia, int duracion){
+  tone(Buzzer, frecuencia, duracion);
+
 }
 
 void girarIzquierda(){
@@ -402,6 +419,8 @@ String implementar(String llave, String valor){
       }else if(valor=="-1"){
         girarIzquierda();
       }
+      bocina(1000,500);
+      delay(100);
       mover(1000);
       delay(5000);
       mover(0);
