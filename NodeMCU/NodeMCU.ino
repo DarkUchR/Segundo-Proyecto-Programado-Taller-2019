@@ -53,7 +53,8 @@ const long interval = 100;
  * tiempoCirculo es el tiempo que dura el carro en girar en circulo
  */
 byte data = B11111111;
-int tiempoCirculo=10000;
+int tiempoCirculo1=6000;
+int tiempoCirculo2=8400;
 /**
  * Función de configuración.
  */
@@ -190,17 +191,17 @@ void procesar(String input, String * output){
       girarDerecha();
       delay(100);
       mover(1000);
-      delay(tiempoCirculo/2);
+      delay(tiempoCirculo2/2);
       mover(0);
       girarIzquierda();
       delay(100);
       mover(1000);
-      delay(tiempoCirculo);
+      delay(tiempoCirculo1/1.3);
       mover(0);
       girarDerecha();
       delay(100);
       mover(1000);
-      delay(tiempoCirculo/2);
+      delay(tiempoCirculo2/2.6);
       mover(0);
       noGirar();
     }
@@ -213,12 +214,18 @@ void procesar(String input, String * output){
         girarDerecha();
         delay(100);
         mover(1000);
-        delay(tiempoCirculo/4);
+        if(i==0){
+
+            delay(tiempoCirculo2/3.5);
+          
+        }else{
+          delay(tiempoCirculo2/4);
+        }
         mover(0);
         girarIzquierda();
         delay(100);
         mover(1000);
-        delay(tiempoCirculo/4);
+        delay(tiempoCirculo1/4);
       }
       mover(0);
       noGirar();
@@ -226,15 +233,15 @@ void procesar(String input, String * output){
     /*
     * Se va hacia adelante y hacia atras repetidamente
     */
-      for(int i=1;i<3;i++){
+      for(int i=1;i<5;i++){
         mover(1023);
         delay(500*i);
         mover(0);
-        delay(500);
+        delay(1000);
         mover(-1023);
-        delay(500*i);
+        delay(750*i);
         mover(0);
-        delay(500);
+        delay(1000);
       }        
     }else if(comando=="parpadear"){
     /*
@@ -256,13 +263,19 @@ void procesar(String input, String * output){
       girarDerecha();
       delay(100);
       mover(1000);
-      delay(tiempoCirculo/2);
+      delay(tiempoCirculo2/3);
+      mover(0);
+      noGirar();
+      delay(2000);
+      mover(-1000);
+      delay(1000);
       mover(0);
       girarIzquierda();
-      delay(100);
+      delay(500);
       mover(-1000);
-      delay(tiempoCirculo/2);
-      mover(0);   
+      delay(tiempoCirculo1/2.9);
+      mover(0);  
+      noGirar(); 
     }
     else{
       Serial.print("Comando no reconocido. Solo presenta llave");
@@ -434,7 +447,11 @@ String implementar(String llave, String valor){
       }
       delay(100);
       mover(1000);
-      delay(20000);
+      if (valor=="1"){
+        delay(tiempoCirculo2);
+      }else if(valor=="-1"){
+        delay(tiempoCirculo1);
+      }
       mover(0);
       noGirar();
     }  
@@ -458,7 +475,7 @@ String implementar(String llave, String valor){
  */
 String getSense(){
   int batteryLvl = 100*analogRead(bat)/1023;
-  int light = digitalRead(ldr);
+  int light = analogRead(ldr);
 
   // EQUIVALENTE A UTILIZAR STR.FORMAT EN PYTHON, %d -> valor decimal
   char sense [16];
