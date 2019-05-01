@@ -1,16 +1,3 @@
-/*
- * Instituto Tecnológico de Costa Rica
- * Computer Engineering
- * Taller de Programación
- * 
- * Proyecto 2, semestre 1
- * 2019
- * 
- * Profesor: Jeff Schmidt Peralta
- * Autor: Pablo Rojas Rodríguez, Juan Pablo Carrillo, Bryan Alfaro
- * 
- * Restricciónes: Biblioteca ESP8266WiFi instalada
- */
 #include <ESP8266WiFi.h>
 
 //Cantidad maxima de clientes es 1
@@ -21,9 +8,6 @@
 /*
  * ssid: Nombre de la Red a la que se va a conectar el Arduino
  * password: Contraseña de la red
- * 
- * Este servidor no funciona correctamente en las redes del TEC,
- * se recomienda crear un hotspot con el celular
  */
 const char* ssid = "bryan";
 const char* password = "12345678";
@@ -46,32 +30,13 @@ const long interval = 100;
  */
 #define ldr D8
 #define bat A0
-/**
- * Variables para manejar las luces con el registro de corrimiento.
- * Utilizan una función propia de Arduino llamada shiftOut.
- * shiftOut(ab,clk,LSBFIRST,data), la función recibe 2 pines, el orden de los bits 
- * y un dato de 8 bits.
- * El registro de corrimiento tiene 8 salidas, desde QA a QH. Nosotros usamos 6 de las 8 salidas
- * Ejemplos al enviar data: 
- * data = B00000000 -> todas encendidas
- * data = B11111111 -> todas apagadas
- * data = B00001111 -> depende de LSBFIRST o MSBFIRST la mitad encendida y la otra mitad apagada
+/*
+ * Variables para manejar las luces con el registro de corrimiento
  */
 #define ab  D6
 #define clk D7
 /*
  * Variables para controlar los motores.
- * EnA y EnB son los que habilitan las salidas del driver.
- * EnA = 0 o EnB = 0 -> free run (No importa que haya en las entradas el motor no recibe potencia)
- * EnA = 0 -> Controla la potencia (Para regular la velocidad utilizar analogWrite(EnA,valor), 
- * con valor [0-1023])
- * EnB = 0 -> Controla la dirección, poner en 0 para avanzar directo.
- * In1 e In2 son inputs de driver, controlan el giro del motor de potencia
- * In1 = 0 ∧ In2 = 1 -> Moverse hacia adelante
- * In1 = 1 ∧ In2 = 0 -> Moverse en reversa
- * In3 e In4 son inputs de driver, controlan la dirección del carro
- * In3 = 0 ∧ In4 = 1 -> Gira hacia la izquierda
- * In3 = 1 ∧ In4 = 0 -> Gira hacia la derecha
  */
 #define EnA D4 // 
 #define In1 D3 // D4 en HIGH : retroceder
@@ -83,18 +48,14 @@ const long interval = 100;
 
 
 /**
- * Variables
+ * Variables:
+ * data son las luces encedidas/apagadas
+ * tiempoCirculo es el tiempo que dura el carro en girar en circulo
  */
-// #AGREGAR VARIABLES NECESARIAS 
 byte data = B11111111;
-
+int tiempoCirculo=10000;
 /**
  * Función de configuración.
- * Se ejecuta la primera vez que el módulo se enciende.
- * Si no puede conectarse a la red especificada entra en un ciclo infinito 
- * hasta ser reestablecido y volver a llamar a la función de setup.
- * La velocidad de comunicación serial es de 115200 baudios, tenga presente
- * el valor para el monitor serial.
  */
 void setup() {
   Serial.begin(115200);
@@ -105,11 +66,9 @@ void setup() {
   pinMode(EnA,OUTPUT);
   pinMode(EnB,OUTPUT);
   pinMode(clk,OUTPUT);
-  pinMode(ab,OUTPUT);
-  
+  pinMode(ab,OUTPUT);  
   pinMode(ldr,INPUT);
 
-  pinMode(1, FUNCTION_3);
   // ip estática para el servidor
   IPAddress ip(192,168,43,200);
   IPAddress gateway(192,168,43,1);
@@ -138,9 +97,6 @@ void setup() {
   server.begin();
   server.setNoDelay(true);
 
-
-
-
 }
 
 /*
@@ -152,17 +108,17 @@ void loop() {
   
   unsigned long currentMillis = millis();
   uint8_t i;
-  //check if there are any new clients
+  //verifica si hay nuevos clientes
   if (server.hasClient()) {
     for (i = 0; i < MAX_SRV_CLIENTS; i++) {
-      //find free/disconnected spot
+      //encuentra nuevos espacios libres
       if (!serverClients[i] || !serverClients[i].connected()) {
         if (serverClients[i]) serverClients[i].stop();
         serverClients[i] = server.available();
         continue;
       }
     }
-    //no free/disconnected spot so reject
+    //si no hay espacios libres lo rechaza
     WiFiClient serverClient = server.available();
     serverClient.stop();
   }
@@ -195,9 +151,6 @@ void loop() {
 /*
  * Función para dividir los comandos en pares llave, valor
  * para ser interpretados y ejecutados por el Carro
- * Un mensaje puede tener una lista de comandos separados por ;
- * Se analiza cada comando por separado.
- * Esta función es semejante a string.split(char) de python
  * 
  */
 void procesar(String input, String * output){
@@ -230,39 +183,86 @@ void procesar(String input, String * output){
       *output = getSense();         
     }
     else if(comando=="Infinite"){
+    /*
+    * Se gira en forma de infinito
+    */
       mover(0);
       girarDerecha();
       delay(100);
       mover(1000);
-      delay(2500);
+      delay(tiempoCirculo/2);
       mover(0);
       girarIzquierda();
       delay(100);
       mover(1000);
-      delay(5000);
+      delay(tiempoCirculo);
       mover(0);
       girarDerecha();
       delay(100);
       mover(1000);
-      delay(2500);
+      delay(tiempoCirculo/2);
       mover(0);
       noGirar();
     }
     else if(comando=="ZigZag"){
-      for(int i=0;i<3;i++){
+    /*
+    * Se avanza en zigzag
+    */
+      for(int i=0;i<2;i++){
         mover(0);
         girarDerecha();
         delay(100);
         mover(1000);
-        delay(2500);
+        delay(tiempoCirculo/4);
         mover(0);
         girarIzquierda();
         delay(100);
         mover(1000);
-        delay(2500);
-      }      
+        delay(tiempoCirculo/4);
+      }
       mover(0);
       noGirar();
+    }else if(comando=="indeciso"){
+    /*
+    * Se va hacia adelante y hacia atras repetidamente
+    */
+      for(int i=1;i<3;i++){
+        mover(1023);
+        delay(500*i);
+        mover(0);
+        delay(500);
+        mover(-1023);
+        delay(500*i);
+        mover(0);
+        delay(500);
+      }        
+    }else if(comando=="parpadear"){
+    /*
+    * Todas las luces parpadean por unos segundos
+    */
+      for(int i=1;i<10;i++){
+        data=00000000;
+        shiftOut(ab, clk, LSBFIRST, data); 
+        delay(500);
+        data=11111111;
+        shiftOut(ab, clk, LSBFIRST, data); 
+        delay(500);
+      }        
+    }else if(comando=="girarFacil"){
+    /*
+    * El carro se da vuelta, girando hacia la derecha, y luego retrocediendo hacia la izquierda
+    */
+      mover(0);
+      girarDerecha();
+      delay(100);
+      mover(1000);
+      delay(tiempoCirculo/2);
+      mover(0);
+      girarIzquierda();
+      delay(100);
+      mover(-1000);
+      delay(tiempoCirculo/2);
+      mover(0);   
     }
     else{
       Serial.print("Comando no reconocido. Solo presenta llave");
@@ -273,11 +273,12 @@ void procesar(String input, String * output){
   }
 }
 
-void bocina(int frecuencia, int duracion){
-  tone(Buzzer, frecuencia, duracion);
-
-}
-
+/*
+ *  Esta funcion hace que gire a la izquierda
+* E: Ninguna
+* S: Ninguna
+* R: Ninguna
+*/
 void girarIzquierda(){
   Serial.println("Girando izquierda");
   //# AGREGAR CÓDIGO PARA GIRAR IZQUIERDA
@@ -285,29 +286,46 @@ void girarIzquierda(){
   digitalWrite(In4, LOW); 
   digitalWrite(EnB, HIGH);
 }
+
+/*
+ * Esta funcion hace que gire a la derecha
+* E: Ninguna
+* S: Ninguna
+* R: Ninguna
+*/
 void girarDerecha(){
   Serial.println("Girando derecha");
   digitalWrite(In3, LOW); 
   digitalWrite(In4, HIGH); 
   digitalWrite(EnB, HIGH); 
 }
+
+/*
+* Esta funcion elimina cualquier giro 
+* E: Ninguna
+* S: Ninguna
+* R: Ninguna
+*/
 void noGirar(){
   Serial.println("directo");
-  //# AGREGAR CÓDIGO PARA NO GIRAR 
   digitalWrite(EnB, LOW);   
 }
 
-
+/*
+* Esta funcion hace que se muevan los motores de desplazamiento
+* E: Un entero con el valor de la potencia
+* S: Ninguna
+* R: Ninguna
+*/
 void mover(int valor){
   Serial.print("Move....: ");
     Serial.println(valor);
-    //# AGREGAR PARA CÓDIGO PARA MOVER EL CARRO HACIA DELANTE Y ATRAS
     if (valor >0){
-        digitalWrite(In1, LOW); 
-        digitalWrite(In2, HIGH); 
-    }else{
-        digitalWrite(In2, LOW); 
         digitalWrite(In1, HIGH); 
+        digitalWrite(In2, LOW); 
+    }else{
+        digitalWrite(In2, HIGH); 
+        digitalWrite(In1, LOW); 
     }
     if(abs(valor)<1023){
       analogWrite(EnA,abs(valor));
@@ -316,6 +334,12 @@ void mover(int valor){
     }
 }
 
+/*
+* Esta funcion cambia las luces a como se le indique
+* E: LLave, Valor(Un string y un entero)
+* S: Ninguna
+* R: Niguna
+*/
 void cambiarLuces(String llave,String valor){
   switch (llave[1]){
       case 'f':
@@ -362,28 +386,15 @@ void cambiarLuces(String llave,String valor){
           data=data|derecha;
         }
         break;
-      /**
-       * # AGREGAR CASOS CON EL FORMATO l[caracter]:valor;
-       * SI SE DESEAN manejar otras salidas del registro de corrimiento
-       */
       default:
         Serial.println("Ninguna de las anteriores");
-        
-        break;
-     
-      
+        break;  
     }
-    //data VARIABLE QUE DEFINE CUALES LUCES SE ENCIENDEN Y CUALES SE APAGAN
-    Serial.println(data);
     Serial.println(data);
     shiftOut(ab, clk, LSBFIRST, data);
-
 }
+
 String implementar(String llave, String valor){
-  /**
-   * La variable result puede cambiar para beneficio del desarrollador
-   * Si desea obtener más información al ejecutar un comando.
-   */
   String result="ok;";
   Serial.print("Comparing llave: ");
   Serial.println(llave);
@@ -408,11 +419,13 @@ String implementar(String llave, String valor){
     Serial.println("Cambiando Luces");
     Serial.print("valor luz: ");
     Serial.println(valor);
-    //Recomendación utilizar operadores lógico de bit a bit (bitwise operators)
     cambiarLuces(llave,valor);
     
   }
   else if(llave=="Circle"){
+   /**
+   *Aqui se hace mover en circulo al carro
+   */
     if (valor=="1" || valor=="-1"){
       if (valor=="1"){
         girarDerecha();
@@ -422,7 +435,7 @@ String implementar(String llave, String valor){
       bocina(1000,500);
       delay(100);
       mover(1000);
-      delay(5000);
+      delay(20000);
       mover(0);
       noGirar();
     }  
@@ -445,14 +458,11 @@ String implementar(String llave, String valor){
  * Función para obtener los valores de telemetría del auto
  */
 String getSense(){
-  //# EDITAR CÓDIGO PARA LEER LOS VALORES DESEADOS
   int batteryLvl = 100*analogRead(bat)/1023;
-  int light = 100*analogRead(ldr)/1023;
+  int light = digitalRead(ldr);
 
   // EQUIVALENTE A UTILIZAR STR.FORMAT EN PYTHON, %d -> valor decimal
   char sense [16];
   sprintf(sense, "blvl:%d;ldr:%d;", batteryLvl, light);
-  Serial.print("Sensing: ");
-  Serial.println(sense);
   return sense;
 }
