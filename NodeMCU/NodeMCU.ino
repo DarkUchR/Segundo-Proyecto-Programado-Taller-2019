@@ -432,7 +432,6 @@ String implementar(String llave, String valor){
       }else if(valor=="-1"){
         girarIzquierda();
       }
-      bocina(1000,500);
       delay(100);
       mover(1000);
       delay(20000);
