@@ -28,13 +28,13 @@ const long interval = 100;
  * Pin donde está conectado el sensor de luz
  * Señal digital, lee 1 si hay luz y 0 si no hay.
  */
-#define ldr D8
+#define ldr D7
 #define bat A0
 /*
  * Variables para manejar las luces con el registro de corrimiento
  */
 #define ab  D6
-#define clk D7
+#define clk D8
 /*
  * Variables para controlar los motores.
  */
@@ -44,8 +44,6 @@ const long interval = 100;
 #define In3 D1 // 
 #define EnB D5 // 
 #define In4 D0// 0 para ir hacia adelante
-#define Buzzer 1
-
 
 /**
  * Variables:
@@ -369,11 +367,11 @@ void cambiarLuces(String llave,String valor){
       case 'b':
         Serial.println("Luces traseras");
         if(valor=="1"){
-          byte traseras = B11001111;
+          byte traseras = B11110011;
           data=data&traseras;
         }
         else if(valor=="0"){
-          byte traseras = B00110000;
+          byte traseras = B00001100;
           data=data|traseras;
         }
         break;
