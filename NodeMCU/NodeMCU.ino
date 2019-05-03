@@ -95,7 +95,7 @@ void setup() {
   }
   server.begin();
   server.setNoDelay(true);
-
+  shiftOut(ab, clk, LSBFIRST, data);
 }
 
 /*
@@ -185,6 +185,7 @@ void procesar(String input, String * output){
     /*
     * Se gira en forma de infinito
     */
+      *output="ok;";
       mover(0);
       girarDerecha();
       delay(100);
@@ -207,6 +208,7 @@ void procesar(String input, String * output){
     /*
     * Se avanza en zigzag
     */
+      *output="ok;";
       for(int i=0;i<2;i++){
         mover(0);
         girarDerecha();
@@ -231,6 +233,7 @@ void procesar(String input, String * output){
     /*
     * Se va hacia adelante y hacia atras repetidamente
     */
+      *output="ok;";
       for(int i=1;i<5;i++){
         mover(1023);
         delay(500*i);
@@ -240,23 +243,27 @@ void procesar(String input, String * output){
         delay(750*i);
         mover(0);
         delay(1000);
+       
       }        
     }else if(comando=="parpadear"){
     /*
     * Todas las luces parpadean por unos segundos
     */
+      *output="ok;";
       for(int i=1;i<10;i++){
-        data=00000000;
+        data=B00000000;
         shiftOut(ab, clk, LSBFIRST, data); 
         delay(500);
-        data=11111111;
+        data=B11111111;
         shiftOut(ab, clk, LSBFIRST, data); 
         delay(500);
+        
       }        
     }else if(comando=="girarFacil"){
     /*
     * El carro se da vuelta, girando hacia la derecha, y luego retrocediendo hacia la izquierda
     */
+      *output="ok;";
       mover(0);
       girarDerecha();
       delay(100);
@@ -330,19 +337,19 @@ void noGirar(){
 */
 void mover(int valor){
   Serial.print("Move....: ");
-    Serial.println(valor);
-    if (valor >0){
-        digitalWrite(In1, HIGH); 
-        digitalWrite(In2, LOW); 
-    }else{
-        digitalWrite(In2, HIGH); 
-        digitalWrite(In1, LOW); 
-    }
-    if(abs(valor)<1023){
-      analogWrite(EnA,abs(valor));
-    }else{
-      analogWrite(EnA,1023);
-    }
+  Serial.println(valor);
+  if (valor >0){
+    digitalWrite(In1, HIGH); 
+    digitalWrite(In2, LOW); 
+  }else{
+    digitalWrite(In2, HIGH); 
+    digitalWrite(In1, LOW); 
+  }
+  if(abs(valor)<1023){
+    analogWrite(EnA,abs(valor));
+  }else{
+    analogWrite(EnA,1023);
+  }
 }
 
 /*
@@ -405,6 +412,13 @@ void cambiarLuces(String llave,String valor){
     shiftOut(ab, clk, LSBFIRST, data);
 }
 
+
+/**
+ * Función para obtener los valores de telemetría del auto
+ * E: Texto de llave y texto de valor
+ * S: Texto de okay cuando se empiza a ejecutar la funcionalidad llamada
+ * R: La llave y el valor deben ser los esperados de acuerdo a las funcionalidades del carro
+ */
 String implementar(String llave, String valor){
   String result="ok;";
   Serial.print("Comparing llave: ");
@@ -470,10 +484,13 @@ String implementar(String llave, String valor){
 
 /**
  * Función para obtener los valores de telemetría del auto
+ * E:--
+ * S: Un texto que tiene la telemetria del auto
+ * R:--
  */
 String getSense(){
   int batteryLvl = 100*analogRead(bat)/1023;
-  int light = analogRead(ldr);
+  int light = digitalRead(ldr);
 
   // EQUIVALENTE A UTILIZAR STR.FORMAT EN PYTHON, %d -> valor decimal
   char sense [16];
