@@ -39,105 +39,64 @@ enviar.place(x=90,y=105)
 recibir=tkscrolled.ScrolledText(Lienzo, height=14, width=45)
 recibir.place(x=530, y=105)
 
-#           _____________________________________
-#__________/Creando el cliente para NodeMCU
-myCar = NodeMCU()
-myCar.start()
+#Se crea el cliente para NodeMCU
+carro = NodeMCU()
+carro.start()
 
+#El siguiente metodo se encarga de capturar los mensajes que se envian al node, junto con su respuesta, y los
+#hace visibles en la pantalla
+# E: Niguna
+# S: Ninguna
+# R: Ninguna
 
-def get_log():
-    """
-    Hilo que actualiza los Text cada vez que se agrega un nuevo mensaje al log de myCar
-    """
+def get_mensajes():
     indice = 0
-    # Variable del carro que mantiene el hilo de escribir.
-    while(myCar.loop):
-        while(indice < len(myCar.log)):
-            mnsSend = "[{0}] cmd: {1}\n".format(indice,myCar.log[indice][0])
-            enviar.insert(END,mnsSend)
+    while(carro.loop):
+        while(indice < len(carro.log)):
+            msg_envio = "[{0}] cmd: {1}\n".format(indice,carro.log[indice][0])
+            enviar.insert(END,msg_envio)
             enviar.see("end")
 
-            mnsRecv = "[{0}] result: {1}\n".format(indice,myCar.log[indice][1])
-            recibir.insert(END, mnsRecv)
+            msg_recibido = "[{0}] result: {1}\n".format(indice,carro.log[indice][1])
+            recibir.insert(END, msg_recibido)
             recibir.see('end')
 
             indice+=1
         time.sleep(0.200)
-    
-p = Thread(target=get_log)
+
+#Este metodo envia el mensaje escrito en la interfaz al node, este mensaje debe de cumplir con el sintaxis adecuado para enviarse
+#E: Ninguna
+#S: Ninguna
+#R: Ninguna
+def send(event):
+
+    mensaje = str(comando.get())
+    if(len(mensaje)>0 and mensaje[-1] == ";"):
+        comando.delete(0, 'end')
+        carro.send(mensaje)
+    else:
+        messagebox.showwarning("Error en el mensaje", "Mensaje sin caracter de finalización ';' ")
+
+
+#Se vincula tecla Enter a la función send
+root.bind('<Return>', send)
+
+p = Thread(target=get_mensajes)
 p.start()
            
 
+titulo = Label(Lienzo,text="Mensaje:",font=('Agency FB',14),bg='white',fg='black')
+titulo.place(x=100,y=360)
 
-L_Titulo = Label(Lienzo,text="Mensaje:",font=('Agency FB',14),bg='white',fg='black')
-L_Titulo.place(x=100,y=360)
+comando = Entry(Lienzo,width=30,font=('Agency FB',14))
+comando.place(x=200,y=360)
 
-E_Command = Entry(Lienzo,width=30,font=('Agency FB',14))
-E_Command.place(x=200,y=360)
-
-L_Titulo = Label(Lienzo,text="ID mensaje:",font=('Agency FB',14),bg='white',fg='black')
-L_Titulo.place(x=550,y=360)
-
-E_read = Entry(Lienzo,width=30,font=('Agency FB',14))
-E_read.place(x=650,y=360)
-
-
-def send (event):
-    """
-    Ejemplo como enviar un mensaje sencillo sin importar la respuesta
-    """
-    mns = str(E_Command.get())
-    if(len(mns)>0 and mns[-1] == ";"):
-        E_Command.delete(0, 'end')
-        myCar.send(mns)
-    else:
-        messagebox.showwarning("Error del mensaje", "Mensaje sin caracter de finalización (';')") 
-
-
-def sendShowID():
-    """
-    Ejemplo como capturar un ID de un mensaje específico.
-    """
-    mns = str(E_Command.get())
-    if(len(mns)>0 and mns[-1] == ";"):
-        E_Command.delete(0, 'end')
-        mnsID = myCar.send(mns)
-        messagebox.showinfo("Mensaje pendiente", "Intentando enviar mensaje, ID obtenido: {0}\n\
-La respuesta definitiva se obtine en un máximo de {1}s".format(mnsID, myCar.timeoutLimit))
-        
-    else:
-        messagebox.showwarning("Error del mensaje", "Mensaje sin caracter de finalización (';')")
-
-def read():
-    """
-    Ejemplo de como leer un mensaje enviado con un ID específico
-    """
-    mnsID = str(E_read.get())
-    if(len(mnsID)>0 and ":" in mnsID):
-        mns = myCar.readById(mnsID)
-        if(mns != ""):
-            messagebox.showinfo("Resultado Obtenido", "El mensaje con ID:{0}, obtuvo de respuesta:\n{1}".format(mnsID, mns))
-            E_read.delete(0, 'end')
-        else:
-            messagebox.showerror("Error de ID", "No se obtuvo respuesta\n\
-El mensaje no ha sido procesado o el ID es invalido\n\
-Asegurese que el ID: {0} sea correcto".format(mnsID))
-
-    else:
-        messagebox.showwarning("Error en formato", "Recuerde ingresar el separador (':')")
-
-root.bind('<Return>', send) #Vinculando tecla Enter a la función send
 
 
 
 #Botones
 
-Btn_1 = Button(Lienzo,text='Send',command=lambda:send(None),fg='white',bg='blue', font=('Agency FB',12))
-Btn_1.place(x=200,y=400)
+Btn_1 = Button(Lienzo,text='Send',command=lambda:send(None), fg='white',bg='blue', font=('Agency FB',12))
+Btn_1.place(x=460,y=360)
 
-Btn_2 = Button(Lienzo,text='Send & Show ID',command=sendShowID,fg='white',bg='blue', font=('Agency FB',12))
-Btn_2.place(x=250,y=400)
-
-Btn_3 = Button(Lienzo,text='Leer Mensaje',command=read,fg='white',bg='blue', font=('Agency FB',12))
-Btn_3.place(x=650,y=400)
 root.mainloop()
