@@ -43,13 +43,11 @@ recibir.place(x=530, y=105)
 carro = NodeMCU()
 carro.start()
 
-#El siguiente metodo se encarga de capturar los mensajes que se envian al node, junto con su respuesta, y los
-#hace visibles en la pantalla
-# E: Niguna
-# S: Ninguna
-# R: Ninguna
-
 def get_mensajes():
+    """El siguiente metodo se encarga de capturar los mensajes que se envian al node, junto con su respuesta, y los hace visibles en la pantalla
+    E: Niguna
+    S: Ninguna
+    R: Ninguna"""
     indice = 0
     while(carro.loop):
         while(indice < len(carro.log)):
@@ -64,12 +62,11 @@ def get_mensajes():
             indice+=1
         time.sleep(0.200)
 
-#Este metodo envia el mensaje escrito en la interfaz al node, este mensaje debe de cumplir con el sintaxis adecuado para enviarse
-#E: Ninguna
-#S: Ninguna
-#R: Ninguna
 def send(event):
-
+    """Este metodo envia el mensaje escrito en la interfaz al node, este mensaje debe de cumplir con el sintaxis adecuado para enviarse
+    E: Un evento
+    S: Ninguna
+    R: El mensaje debe de terminar con ; """
     mensaje = str(comando.get())
     if(len(mensaje)>0 and mensaje[-1] == ";"):
         comando.delete(0, 'end')
@@ -98,5 +95,6 @@ comando.place(x=200,y=360)
 
 Btn_1 = Button(Lienzo,text='Send',command=lambda:send(None), fg='white',bg='blue', font=('Agency FB',12))
 Btn_1.place(x=460,y=360)
+
 
 root.mainloop()
