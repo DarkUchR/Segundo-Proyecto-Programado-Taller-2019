@@ -94,7 +94,7 @@ comando.place(x=200,y=360)
 #Botones
 
 Btn_1 = Button(Lienzo,text='Send',command=lambda:send(None), fg='white',bg='blue', font=('Agency FB',12))
-Btn_1.place(x=460,y=360)
+Btn_1.place(x=550,y=360)
 
 
 root.mainloop()
