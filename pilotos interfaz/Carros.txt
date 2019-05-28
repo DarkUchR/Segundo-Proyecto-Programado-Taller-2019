@@ -1,0 +1,308 @@
+1
+Mexico
+Audi
+Sport Abt
+Audi Sport Abt Schaffler 1
+2019
+2
+3
+5
+Disponible
+11
+100
+20
+Luz\Bateria
+4
+Mexico
+Audi
+Sport Abt
+Audi Sport Abt Schaffler 2
+2018
+4
+3
+10
+Descargado
+14
+150
+60
+Luz\Bateria
+3
+UK
+BMW
+Fire
+BMW I Andrettu Motosport 1
+2017
+1
+5
+8
+En Reparacion
+17
+170
+55
+Luz\Bateria
+15
+Portugal
+DS
+Techeetah
+DS Techeetah 2
+2015
+1
+2
+6
+Disponible
+12
+200
+50
+Luz\Bateria
+16
+Alemania
+HWA
+Torpedo
+HWA Racelab 1
+2016
+3
+2
+15
+Disponible
+7
+250
+15
+Luz\Bateria
+14
+Belgica
+Envission
+Monster
+Envission 2
+2017
+2
+2
+19
+En Reparaciones
+16
+70
+71
+Luz\Bateria
+8
+Brazil
+Nio
+F
+NIO 2
+2018
+2
+3
+20
+Disponible
+15
+120
+80
+Luz\Bateria
+11
+Colombia
+Nissan
+Edams
+Nissan Edams 1
+2017
+2
+2
+17
+Descargado
+11
+110
+33
+Luz\Bateria
+15
+Portugal
+DS
+Techeetah
+DS Techeetah 2
+2015
+1
+2
+6
+Disponible
+12
+201
+50
+Luz\Bateria
+5
+Holanda
+Geox
+Dragon
+Geox Dragon 1
+2013
+4
+2
+13
+Disponible
+13
+160
+47
+Luz\Bateria
+9
+Brazil
+Nio
+F
+NIO 1
+2018
+2
+3
+20
+Disponible
+16
+120
+80
+Luz\Bateria
+6
+Estados Unidos
+Jaguar
+Racing
+Panasonic Jaguar Racing 1
+2017
+4
+1
+25
+Disponible
+13
+100
+56
+Luz\Bateria
+10
+Costa Rica
+Venturi
+Madness
+Venturi 1
+2016
+3
+7
+20
+En reparaciones
+9
+180
+75
+Luz
+17
+Alemania
+HWA
+Torpedo
+HWA Racelab 2
+2016
+3
+2
+15
+Descargado
+7
+250
+15
+Luz\Bateria
+12
+Colombia
+Nissan
+Edams
+Nissan Edams 2
+2018
+2
+2
+17
+Disponible
+11
+110
+33
+Luz\Bateria
+22
+Holanda
+Geox
+Dragon
+Geox Dragon 1
+2013
+4
+2
+13
+Disponible
+13
+160
+47
+Luz\Bateria
+20
+Venezuela
+DS
+Techeetah
+DS Techeetah 1
+2018
+1
+2
+6
+Disponible
+12
+200
+50
+Luz\Bateria
+18
+Costa Rica
+Venturi
+Madness
+Venturi 2
+2017
+3
+7
+20
+Disponible
+9
+180
+75
+Luz\Bateria
+19
+UK
+BMW
+Fire
+BMW I Andrettu Motosport 2
+2019
+1
+5
+8
+Disponible
+19
+171
+52
+Luz\Bateria
+13
+Estados Unidos
+Jaguar
+Racing
+Panasonic Jaguar Racing 2
+2017
+4
+1
+25
+Disponible
+13
+100
+56
+Luz\Bateria
+2
+Belgica
+Envission
+Monster
+Envission 2
+2017
+2
+2
+19
+Disponible
+16
+70
+75
+Luz\Bateria
+21
+Portugal
+Mahindra
+Speed
+Mahindra Racing 1
+2018
+5
+1
+24
+Disponible
+9
+120
+60
+Luz\Bateria
