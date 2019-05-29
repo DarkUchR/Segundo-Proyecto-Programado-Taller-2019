@@ -2,16 +2,12 @@
 Instituto TecnolÃ³gico de Costa Rica
 Computer Engineering
 Taller de ProgramaciÃ³n
-
 Cliente python Formula E CE Tec
 Proyecto 2, semestre 1
 2019
-
 Profesor: Milton Villegas Lemus
 Autor: Santiago Gamboa RamÃ­rez
-
 Restricciónes: Python3.7
-
 Código para realizar la conexión con el servidor del NodeMCU
 """
 
@@ -257,4 +253,3 @@ class NodeMCU(Thread):
         if(len(self.error_list)>0):
             error = self.error_list.pop()
         return error
-        
