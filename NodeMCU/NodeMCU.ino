@@ -135,11 +135,9 @@ void loop() {
           serverClients[i].flush();
           
           // Preparamos la respuesta para el cliente
-          String respuesta; 
-          procesar(mensaje, &respuesta);
-          Serial.println(mensaje);
-          // Escribimos la respuesta al cliente.
-          serverClients[i].println(respuesta);
+          procesar(mensaje, serverClients[i]);
+          Serial.println(mensaje);          
+
         }  
         serverClients[i].stop();
       }
@@ -147,12 +145,18 @@ void loop() {
   }
 }
 
+
+void responder(WiFiClient cliente, String laRespuesta){
+    cliente.println(laRespuesta);
+}
+
+
 /*
  * Función para dividir los comandos en pares llave, valor
  * para ser interpretados y ejecutados por el Carro
  * 
  */
-void procesar(String input, String * output){
+void procesar(String input, WiFiClient cliente){
   //Buscamos el delimitador ;
   Serial.println("Checking input....... ");
   int comienzo = 0, delComa, del2puntos;
@@ -168,6 +172,7 @@ void procesar(String input, String * output){
     * Si el comando tiene ':', es decir tiene un valor
     * se llama a la función exe 
     */
+    String output;
     if(del2puntos>0){
         String llave = comando.substring(0,del2puntos);
         String valor = comando.substring(del2puntos+1);
@@ -176,16 +181,20 @@ void procesar(String input, String * output){
         Serial.print(llave);
         Serial.println(valor);
         //Una vez separado en llave valor 
-        *output = implementar(llave,valor); 
+        
+        output = implementar(llave,valor); 
+        responder(cliente, output);
     }
     else if(comando == "sense"){
-      *output = getSense();         
+      output = getSense();
+      responder(cliente, output);       
     }
     else if(comando=="Infinite"){
     /*
     * Se gira en forma de infinito
     */
-      *output="ok;";
+      output="ok;";
+      responder(cliente, output);
       mover(0);
       girarDerecha();
       delay(100);
@@ -208,7 +217,8 @@ void procesar(String input, String * output){
     /*
     * Se avanza en zigzag
     */
-      *output="ok;";
+      output="ok;";
+      responder(cliente, output);
       for(int i=0;i<2;i++){
         mover(0);
         girarDerecha();
@@ -233,7 +243,8 @@ void procesar(String input, String * output){
     /*
     * Se va hacia adelante y hacia atras repetidamente
     */
-      *output="ok;";
+      output="ok;";
+      responder(cliente, output);
       for(int i=1;i<5;i++){
         mover(1023);
         delay(500*i);
@@ -249,7 +260,8 @@ void procesar(String input, String * output){
     /*
     * Todas las luces parpadean por unos segundos
     */
-      *output="ok;";
+      output="ok;";
+      responder(cliente, output);
       for(int i=1;i<10;i++){
         data=B00000000;
         shiftOut(ab, clk, LSBFIRST, data); 
@@ -263,7 +275,8 @@ void procesar(String input, String * output){
     /*
     * El carro se da vuelta, girando hacia la derecha, y luego retrocediendo hacia la izquierda
     */
-      *output="ok;";
+      output="ok;";
+      responder(cliente, output);
       mover(0);
       girarDerecha();
       delay(100);
@@ -284,7 +297,8 @@ void procesar(String input, String * output){
     }
     else{
       Serial.print("Comando no reconocido. Solo presenta llave");
-      *output = "Undefined key value: " + comando+";";
+      output = "Undefined key value: " + comando+";";
+      responder(cliente, output);
     }
     comienzo = delComa+1;
     delComa = input.indexOf(';',comienzo);
