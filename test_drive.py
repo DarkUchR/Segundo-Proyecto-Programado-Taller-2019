@@ -36,7 +36,7 @@ def main_test_drive(ventana):
 
     #variable global para poder acelerar
     global potencia
-    potencia=50
+    potencia=0
 
 
     #Se vincula tecla Enter a la función send
@@ -46,99 +46,145 @@ def main_test_drive(ventana):
     p.start()
 
     #boton para acelerar
-    Acelerar = Button(Lienzo,text='Acelerar',command= Aceleracion, fg='white',bg='black', font=('Agency FB',14))
+    Acelerar = Button(Lienzo,text='Acelerar',command= aceleracion, fg='white',bg='black', font=('Agency FB',14))
     Acelerar.place(x=795,y=40)
     #boton para frenar, pero tiene el comando sense para probarlo era nada mas
-    Frenar = Button(Lienzo,text=' Frenar ',command= lambda:send("Sense;"), fg='white',bg='black', font=('Agency FB',14))
+    Frenar = Button(Lienzo,text=' Frenar ',command= send_reversa, fg='white',bg='black', font=('Agency FB',14))
     Frenar.place(x=885,y=40)
-    Izq = Button(Lienzo,text='⇽',command= 1, fg='white',bg='black', font=('Agency FB',14))
+    Izq = Button(Lienzo,text='⇽',command= izquierda, fg='white',bg='black', font=('Agency FB',14))
     Izq.place(x=810,y=100)
-    Der = Button(Lienzo,text='⇾',command= 1, fg='white',bg='black', font=('Agency FB',14))
+    Der = Button(Lienzo,text='⇾',command= derecha, fg='white',bg='black', font=('Agency FB',14))
     Der.place(x=910,y=100)
     Celeb = Button(Lienzo,text='Celebrar',command= 1, fg='white',bg='black', font=('Agency FB',14))
     Celeb.place(x=840,y=300)
-    Mov = Button(Lienzo,text='Mov.Especial',command= 1, fg='white',bg='black', font=('Agency FB',14))
+    Mov = Button(Lienzo,text='Mov.Especial',command= mov_especial, fg='white',bg='black', font=('Agency FB',14))
     Mov.place(x=822,y=350)
-    LuzF = Button(Lienzo,text='Luz Frontal',command= 1, fg='white',bg='black', font=('Agency FB',14))
+    LuzF = Button(Lienzo,text='Luz Frontal',command= luces_frontales, fg='white',bg='black', font=('Agency FB',14))
     LuzF.place(x=770,y=180)
-    LuzT = Button(Lienzo,text='Luz Trasera',command= 1, fg='white',bg='black', font=('Agency FB',14))
+    LuzT = Button(Lienzo,text='Luz Trasera',command= luces_traseras, fg='white',bg='black', font=('Agency FB',14))
     LuzT.place(x=882,y=180)
-    LuzDI = Button(Lienzo,text='Dir Izq',command= 1, fg='white',bg='black', font=('Agency FB',14))
+    LuzDI = Button(Lienzo,text='Dir Izq',command= luces_izquierda, fg='white',bg='black', font=('Agency FB',14))
     LuzDI.place(x=808,y=240)
-    LuzDD = Button(Lienzo,text='Dir Der',command= 1, fg='white',bg='black', font=('Agency FB',14))
+    LuzDD = Button(Lienzo,text='Dir Der',command= luces_derecha, fg='white',bg='black', font=('Agency FB',14))
     LuzDD.place(x=882,y=240)
     salir = Button(Lienzo,text='Volver',command= regresar_test_drive, fg='white',bg='black', font=('Agency FB',14))
     salir.place(x=850,y=400)
 
-    pwm = Label(Lienzo,text="pwm",font=('Agency FB',14),bg='white',fg='black')
+    global pwm
+    pwm = Label(Lienzo,text="pwm: "+str(potencia),font=('Agency FB',14),bg='white',fg='black')
     pwm.place(x=355,y=358)
+
+    global btr
+    btr = Label(Lienzo,text="Bateria: "),font=('Agency FB',14),bg='white',fg='black')
+    btr.place(x=355,y=358)
+
+    global luz
+    luz = Label(Lienzo,text=""),font=('Agency FB',14),bg='white',fg='black')
+    luz.place(x=355,y=358)
+
+    
     root.protocol("WM_DELETE_WINDOW", _delete_window)
     root.mainloop()
-
-def get_mensajes():
-
-    """El siguiente metodo se encarga de capturar los mensajes que se envian al node, junto con su respuesta, y los hace visibles en la pantalla
-    E: Niguna
-    S: Ninguna
-    R: Ninguna"""
-    indice = 0
-    while(carro.loop):
-        while(indice < len(carro.log)):
-            msg_envio = "[{0}] cmd: {1}\n".format(indice,carro.log[indice][0])
-            
-            msg_recibido = "[{0}] result: {1}\n".format(indice,carro.log[indice][1])
-
-            indice+=1
-        time.sleep(0.200)
-#funcion send modificada para recibir valores mediante la configuracion de los botones nada mas
-def send(msg):
-    """Este metodo envia el mensaje escrito en la interfaz al node, este mensaje debe de cumplir con el sintaxis adecuado para enviarse
-    E: Un evento
-    S: Ninguna
-    R: El mensaje debe de terminar con ; """
-    mensaje = str(msg)
-    if(len(mensaje)>0 and mensaje[-1] == ";"):
-        carro.send(mensaje)
-    else:
-        messagebox.showwarning("Error en el mensaje", "Mensaje sin caracter de finalización ';' ")
 
 #Funciones asociadas a cada boton de comandos:
         
 #funcion para acelerar de 50 en 50, que muestra la potencia en pantalla
-def Aceleracion():
-    i=0
+def aceleracion():
     global potencia
-    while i<1:
-        sendAcelerar(str(potencia))
-        pwm2 = Label(Lienzo,text="pwm:"+str(potencia),font=('Agency FB',14),bg='white',fg='black')
-        pwm2.place(x=350,y=358)
-        potencia+=50
-        i+=1
+    global pwm
+    potencia+=50
+    pwm.config(text= "pwm: "+str(potencia))
+    enviar_mensajes("pwm:"+str(potencia)+";")
+
+def send_reversa():
     
-def sendAcelerar(pot):
-    """Este metodo envia el mensaje escrito en la interfaz al node, este mensaje debe de cumplir con el sintaxis adecuado para enviarse
-    E: Ninguna
-    S: Ninguna
-    R: El mensaje debe de terminar con ; """
-    mensaje = "pwm,"+pot+";"
-    if(len(mensaje)>0 and mensaje[-1] == ";"):
-        carro.send(mensaje)
-    else:
-        messagebox.showwarning("Error en el mensaje", "Mensaje sin caracter de finalización ';' ")
+    enviar_mensajes("pwm:0;")
+    global potencia
+    global pwm
+    potencia=0
+    pwm.config(text= "pwm: 0")
 
-#funcion para reversa, sin terminar
-def sendReversa():
-    """Este metodo envia el mensaje escrito en la interfaz al node, este mensaje debe de cumplir con el sintaxis adecuado para enviarse
-    E: Ninguna
-    S: Ninguna
-    R: El mensaje debe de terminar con ; """
-    mensaje = ""
-    if(len(mensaje)>0 and mensaje[-1] == ";"):
-        carro.send(mensaje)
+def luces_frontales():
+    global lf
+    enviar_mensajes("lf:"+str(lf)+";")
+    if lf==1:
+        lf=0
     else:
-        messagebox.showwarning("Error en el mensaje", "Mensaje sin caracter de finalización ';' ")
-           
+        lf=1
+    
+def luces_traseras():
+    global lb
+    enviar_mensajes("lb:"+str(lb)+";")
+    if lb==1:
+        lb=0
+    else:
+        lb=1
+    
+def luces_izquierda():
+    global ll
+    enviar_mensajes("ll:"+str(ll)+";")
+    if ll==1:
+        ll=0
+    else:
+        ll=1
 
+def luces_derecha():
+    global lr
+    enviar_mensajes("lr:"+str(lr)+";")
+    if lr==1:
+        lr=0
+    else:
+        lr=1
+
+
+def get_sense():
+    enviar_mensajes("sense;")
+
+def izquierda():
+    enviar_mensajes("dir:1;")
+    
+def derecha():
+    enviar_mensajes("dir:-1;")
+
+def centro():
+    enviar_mensajes("dir:0;")
+
+def mov_especial():
+    enviar_mensajes("indeciso;")
+    
+    
+
+    
+def telemetria():
+    
+def enviar_mensajes(mensaje):
+    errores=0
+    recibido=False
+    carro.send(mensaje)
+    msg_recibido="-1"
+    while not(recibido) and errores<5:
+        carro.send(mensaje)
+        while msg_recibido ="-1" and carro.loop:
+            msg_recibido = carro.readById(ide)
+            time.sleep(0.200)
+
+        if msg_recibido=="ok":
+            recibido=True
+        elif msg_recibido[0:4]=="blvl":
+            recibido=True
+        else:
+            errores+=1
+        
+    if errores=5:
+        messagebox.showinfo("Error","Fallo de comunicacion con el carro, reinicielo para recuperar la comunicacion")
+        return "-1"
+    else:
+        return msg_recibido
+
+        
+    
+    
+    
 def regresar_test_drive():
     global carro
     carro.loop=False

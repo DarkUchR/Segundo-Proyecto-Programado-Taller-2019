@@ -183,7 +183,7 @@ class NodeMCU(Thread):
 
     #           _______________________________________________
     #__________/Función para leer un mensaje específico del log
-    def readById(self, id):
+    def readById(self, ide):
         """
         Retorna el elemento del registro donde se incluye el mensaje y la respuesta del cliente.
         No elimina el mensaje de la lista de recibidos.
@@ -197,8 +197,8 @@ class NodeMCU(Thread):
             response:   
         """
         response = ""
-        if(isinstance(id,str) and ":" in id):
-           index = id.split(":")
+        if(isinstance(ide,str) and ":" in ide):
+           index = ide.split(":")
            i = index[0]
            subi =index[1]
            if(i.isdigit() and subi.isdigit()):
@@ -207,6 +207,7 @@ class NodeMCU(Thread):
                if(i<len(self.log)):
                    response = self.log[i][1].split(";")[subi]
                else:
+                   response="-1"
                    print("No se ha enviado el mensaje")
         return response
         
