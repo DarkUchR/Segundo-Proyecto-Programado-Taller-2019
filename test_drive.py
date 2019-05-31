@@ -39,12 +39,6 @@ def main_test_drive(ventana):
     potencia=0
 
 
-    #Se vincula tecla Enter a la función send
-    root.bind('<Return>', send)
-
-    p = Thread(target=get_mensajes)
-    p.start()
-
     #boton para acelerar
     Acelerar = Button(Lienzo,text='Acelerar',command= aceleracion, fg='white',bg='black', font=('Agency FB',14))
     Acelerar.place(x=795,y=40)
@@ -75,14 +69,24 @@ def main_test_drive(ventana):
     pwm.place(x=355,y=358)
 
     global btr
-    btr = Label(Lienzo,text="Bateria: "),font=('Agency FB',14),bg='white',fg='black')
-    btr.place(x=355,y=358)
+    btr = Label(Lienzo,text="Bateria: ",font=('Agency FB',14),bg='white',fg='black')
+    btr.place(x=470,y=358)
 
-    global luz
-    luz = Label(Lienzo,text=""),font=('Agency FB',14),bg='white',fg='black')
-    luz.place(x=355,y=358)
+    global iluminacion
+    iluminacion = Label(Lienzo,text="Luz: ",font=('Agency FB',14),bg='white',fg='black')
+    iluminacion.place(x=250,y=358)
 
-    
+    global ll
+    global lr
+    global lf
+    global lb
+    ll=0
+    lr=0
+    lf=0
+    lb=0
+    thread_telemetria=Thread(target=enviar_mensajes,args=["indeciso;"])
+    thread_telemetria.start()
+
     root.protocol("WM_DELETE_WINDOW", _delete_window)
     root.mainloop()
 
@@ -94,11 +98,11 @@ def aceleracion():
     global pwm
     potencia+=50
     pwm.config(text= "pwm: "+str(potencia))
-    enviar_mensajes("pwm:"+str(potencia)+";")
+    Thread(target=enviar_mensajes,args=(["pwm: "+str(potencia)+";"])).start()
 
 def send_reversa():
     
-    enviar_mensajes("pwm:0;")
+    Thread(target=enviar_mensajes,args=(["pwm:0;"])).start()
     global potencia
     global pwm
     potencia=0
@@ -106,7 +110,7 @@ def send_reversa():
 
 def luces_frontales():
     global lf
-    enviar_mensajes("lf:"+str(lf)+";")
+    Thread(target=enviar_mensajes,args=(["lf:"+str(lf)+";"])).start()
     if lf==1:
         lf=0
     else:
@@ -114,7 +118,7 @@ def luces_frontales():
     
 def luces_traseras():
     global lb
-    enviar_mensajes("lb:"+str(lb)+";")
+    Thread(target=enviar_mensajes,args=(["lb:"+str(lb)+";"])).start()
     if lb==1:
         lb=0
     else:
@@ -122,7 +126,7 @@ def luces_traseras():
     
 def luces_izquierda():
     global ll
-    enviar_mensajes("ll:"+str(ll)+";")
+    Thread(target=enviar_mensajes,args=(["ll:"+str(ll)+";"])).start()
     if ll==1:
         ll=0
     else:
@@ -130,53 +134,61 @@ def luces_izquierda():
 
 def luces_derecha():
     global lr
-    enviar_mensajes("lr:"+str(lr)+";")
+    Thread(target=enviar_mensajes,args=["lr:"+str(lr)+";"]).start()
     if lr==1:
         lr=0
     else:
         lr=1
 
-
-def get_sense():
-    enviar_mensajes("sense;")
-
 def izquierda():
-    enviar_mensajes("dir:1;")
+    Thread(target=enviar_mensajes,args=["dir:1;"]).start()
     
 def derecha():
-    enviar_mensajes("dir:-1;")
+    Thread(target=enviar_mensajes,args=["dir:-1;"]).start()
 
 def centro():
-    enviar_mensajes("dir:0;")
+    Thread(target=enviar_mensajes,args=["dir:0;"]).start()
 
 def mov_especial():
-    enviar_mensajes("indeciso;")
+
+    Thread(target=enviar_mensajes,args=["indeciso;"]).start()
     
     
 
     
 def telemetria():
+    while carro.loop:
+        sense= enviar_mensajes("sense;")
+        if sense[0:4]=="blvl":
+            btlv=sense.split(";")[0]
+            luz= sense.split(";")[1]
+            
+            iluminacion.config(text="Luz: "+luz)
+            btr.config(text="Bateria: "+brlv)
+        time.sleep(30)
+        
     
 def enviar_mensajes(mensaje):
     errores=0
     recibido=False
     carro.send(mensaje)
     msg_recibido="-1"
-    while not(recibido) and errores<5:
-        carro.send(mensaje)
-        while msg_recibido ="-1" and carro.loop:
+    while not(recibido) and errores<5 and carro.loop:
+        ide = carro.send(mensaje)
+        while msg_recibido =="-1" and carro.loop:
             msg_recibido = carro.readById(ide)
             time.sleep(0.200)
-
+            print("-1")
+        print(msg_recibido)
         if msg_recibido=="ok":
             recibido=True
         elif msg_recibido[0:4]=="blvl":
             recibido=True
         else:
             errores+=1
+            
         
-    if errores=5:
-        messagebox.showinfo("Error","Fallo de comunicacion con el carro, reinicielo para recuperar la comunicacion")
+    if errores==5 or mensaje!="sense;":
         return "-1"
     else:
         return msg_recibido
