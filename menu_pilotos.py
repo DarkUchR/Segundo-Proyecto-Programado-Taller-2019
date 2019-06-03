@@ -411,9 +411,11 @@ def cambiar_test():
     leave()
     if canvas==1:
         canvas_ventana1.pack_forget()
+        scrollbar.pack_forget()
     else:
         canvas2_ventana1.pack_forget()
-    main_test_drive(ventana1 )
+        scrollbar2.pack_forget()
+    main_test_drive(ventana1, pilotos[pilot_waiting][0],pilotos[pilot_waiting][3],carros[pilot_waiting][4])
     return_menu_pilotos()
     
 def leave():
@@ -427,9 +429,11 @@ def return_menu_pilotos():
         ventana1.resizable(width=NO,height=NO)
         if canvas==1:
             canvas_ventana1.pack()
+            scrollbar.pack()
         else:
             canvas2_ventana1.pack()
-        
+            scrollbar2.pack()
+
         thread1= Thread(target=colorear,args=())
         thread1.start()
         ventana1.protocol("WM_DELETE_WINDOW", _delete_window)

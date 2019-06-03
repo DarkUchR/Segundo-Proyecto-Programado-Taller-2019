@@ -11,7 +11,7 @@ import tkinter.scrolledtext as tkscrolled
 from WiFiClient import NodeMCU
 
 
-def main_test_drive(ventana):
+def main_test_drive(ventana,nombre, nacionalidad, escuderia):
     #Ventana principal
     global root
     root=ventana
@@ -76,6 +76,13 @@ def main_test_drive(ventana):
     iluminacion = Label(Lienzo,text="Luz: ",font=('Agency FB',14),bg='white',fg='black')
     iluminacion.place(x=250,y=358)
 
+    nombre_label = Label(Lienzo,text="Piloto: "+nombre[:-1],font=('Agency FB',14),bg='gray',fg='black')
+    nombre_label.place(x=40,y=60)
+    nacionalidad_label = Label(Lienzo,text= "Nacionalidad: "+nacionalidad[:-1],font=('Agency FB',14),bg='gray',fg='black')
+    nacionalidad_label.place(x=40,y=95)
+    escuderia_label = Label(Lienzo,text= "Escuderia: "+escuderia[:-3],font=('Agency FB',14),bg='gray',fg='black')
+    escuderia_label.place(x=40,y=130)
+    
     global ll
     global lr
     global lf
