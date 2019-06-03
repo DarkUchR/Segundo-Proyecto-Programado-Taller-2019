@@ -428,10 +428,10 @@ def return_menu_pilotos():
         ventana1.minsize(1000,800)
         ventana1.resizable(width=NO,height=NO)
         if canvas==1:
-            scrollbar.pack()
+            scrollbar.pack( side = RIGHT, fill=Y )
             canvas_ventana1.pack()
         else:
-            scrollbar2.pack()
+            scrollbar2.pack( side = RIGHT, fill=Y )
             canvas2_ventana1.pack()
 
         thread1= Thread(target=colorear,args=())
