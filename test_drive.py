@@ -11,7 +11,7 @@ import tkinter.scrolledtext as tkscrolled
 from WiFiClient import NodeMCU
 
 
-def main_test_drive(ventana,nombre, nacionalidad, escuderia):
+def main_test_drive(ventana,nombre, nacionalidad, escuderia, piloto_img, pais_img):
     #Ventana principal
     global root
     root=ventana
@@ -76,13 +76,15 @@ def main_test_drive(ventana,nombre, nacionalidad, escuderia):
     iluminacion = Label(Lienzo,text="Luz: ",font=('Agency FB',14),bg='white',fg='black')
     iluminacion.place(x=250,y=358)
 
-    nombre_label = Label(Lienzo,text="Piloto: "+nombre[:-1],font=('Agency FB',14),bg='gray',fg='black')
-    nombre_label.place(x=40,y=60)
-    nacionalidad_label = Label(Lienzo,text= "Nacionalidad: "+nacionalidad[:-1],font=('Agency FB',14),bg='gray',fg='black')
-    nacionalidad_label.place(x=40,y=95)
-    escuderia_label = Label(Lienzo,text= "Escuderia: "+escuderia[:-3],font=('Agency FB',14),bg='gray',fg='black')
-    escuderia_label.place(x=40,y=130)
-    
+    nombre_label = Label(Lienzo,text=nombre[:-1],font=('Agency FB',14),bg='gray',fg='white')
+    nombre_label.place(x=40,y=125)
+    escuderia_label = Label(Lienzo,text= escuderia[:-3],font=('Agency FB',14),bg='gray',fg='white')
+    escuderia_label.place(x=40,y=160)
+
+    rectangulo_cara=Lienzo.create_rectangle(43, 50,43+65,50+68, fill='gray',outline="white")
+    piloto=Lienzo.create_image(40,50,image = piloto_img ,anchor = NW)
+    pais=Lienzo.create_image(120,70,image = pais_img ,anchor = NW)
+
     global ll
     global lr
     global lf

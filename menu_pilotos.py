@@ -415,7 +415,9 @@ def cambiar_test():
     else:
         canvas2_ventana1.pack_forget()
         scrollbar2.pack_forget()
-    main_test_drive(ventana1, pilotos[pilot_waiting][0],pilotos[pilot_waiting][3],carros[pilot_waiting][4])
+    piloto_img=cargar_imagen(pilotos[pilot_waiting][1][:-1]+".png")
+    pais_img=cargar_imagen(pilotos[pilot_waiting][3][:-1]+".png")
+    main_test_drive(ventana1, pilotos[pilot_waiting][0],pilotos[pilot_waiting][3],carros[pilot_waiting][4],piloto_img,pais_img )
     return_menu_pilotos()
     
 def leave():
