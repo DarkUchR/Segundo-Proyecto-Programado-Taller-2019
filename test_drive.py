@@ -91,7 +91,7 @@ def main_test_drive(ventana):
     root.mainloop()
 
 #Funciones asociadas a cada boton de comandos:
-        
+
 #funcion para acelerar de 50 en 50, que muestra la potencia en pantalla
 def aceleracion():
     global potencia
@@ -101,7 +101,7 @@ def aceleracion():
     Thread(target=enviar_mensajes,args=(["pwm: "+str(potencia)+";"])).start()
 
 def send_reversa():
-    
+
     Thread(target=enviar_mensajes,args=(["pwm:0;"])).start()
     global potencia
     global pwm
@@ -112,37 +112,53 @@ def luces_frontales():
     global lf
     Thread(target=enviar_mensajes,args=(["lf:"+str(lf)+";"])).start()
     if lf==1:
+        luces = Label(Lienzo,text="  E  ",font=('Agency FB',18),bg='white',fg='black')
+        luces.place(x=515,y=95)
         lf=0
     else:
+        luces = Label(Lienzo,text="  A  ",font=('Agency FB',18),bg='white',fg='black')
+        luces.place(x=515,y=95)
         lf=1
-    
+
 def luces_traseras():
     global lb
     Thread(target=enviar_mensajes,args=(["lb:"+str(lb)+";"])).start()
     if lb==1:
+        luces = Label(Lienzo,text="  E  ",font=('Agency FB',18),bg='red',fg='black')
+        luces.place(x=565,y=95)
         lb=0
     else:
+        luces = Label(Lienzo,text="  A  ",font=('Agency FB',18),bg='red',fg='black')
+        luces.place(x=565,y=95)
         lb=1
-    
+
 def luces_izquierda():
     global ll
     Thread(target=enviar_mensajes,args=(["ll:"+str(ll)+";"])).start()
     if ll==1:
+        luces = Label(Lienzo,text="  E  ",font=('Agency FB',18),bg='yellow',fg='black')
+        luces.place(x=615,y=95)
         ll=0
     else:
+        luces = Label(Lienzo,text="  A  ",font=('Agency FB',18),bg='yellow',fg='black')
+        luces.place(x=615,y=95)
         ll=1
 
 def luces_derecha():
     global lr
     Thread(target=enviar_mensajes,args=["lr:"+str(lr)+";"]).start()
     if lr==1:
+        luces = Label(Lienzo,text="  E  ",font=('Agency FB',18),bg='yellow',fg='black')
+        luces.place(x=665,y=95)
         lr=0
     else:
+        luces = Label(Lienzo,text="  A  ",font=('Agency FB',18),bg='yellow',fg='black')
+        luces.place(x=665,y=95)
         lr=1
 
 def izquierda():
     Thread(target=enviar_mensajes,args=["dir:1;"]).start()
-    
+
 def derecha():
     Thread(target=enviar_mensajes,args=["dir:-1;"]).start()
 
@@ -152,22 +168,22 @@ def centro():
 def mov_especial():
 
     Thread(target=enviar_mensajes,args=["indeciso;"]).start()
-    
-    
 
-    
+
+
+
 def telemetria():
     while carro.loop:
         sense= enviar_mensajes("sense;")
         if sense[0:4]=="blvl":
             btlv=sense.split(";")[0]
             luz= sense.split(";")[1]
-            
+
             iluminacion.config(text="Luz: "+luz)
             btr.config(text="Bateria: "+brlv)
         time.sleep(30)
-        
-    
+
+
 def enviar_mensajes(mensaje):
     errores=0
     recibido=False
@@ -186,17 +202,17 @@ def enviar_mensajes(mensaje):
             recibido=True
         else:
             errores+=1
-            
-        
+
+
     if errores==5 or mensaje!="sense;":
         return "-1"
     else:
         return msg_recibido
 
-        
-    
-    
-    
+
+
+
+
 def regresar_test_drive():
     global carro
     carro.loop=False
@@ -209,5 +225,3 @@ def _delete_window():
     carro.loop=False
     time.sleep(0.5)
     root.destroy()
-
-
