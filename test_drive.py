@@ -87,15 +87,19 @@ def main_test_drive(ventana):
     lf=1
     lb=1
 
-    lucesf = Label(Lienzo,text="  A ",font=('Agency FB',18),bg='white',fg='black')
+    global lucesf
+    lucesf = Label(Lienzo,text="  A  ",font=('Agency FB',18),bg='white',fg='black')
     lucesf.place(x=515,y=95)
 
+    global lucesb
     lucesb = Label(Lienzo,text="  A  ",font=('Agency FB',18),bg='red',fg='black')
     lucesb.place(x=565,y=95)
 
+    global lucesl
     lucesl = Label(Lienzo,text="  A  ",font=('Agency FB',18),bg='yellow',fg='black')
     lucesl.place(x=615,y=95)
 
+    global lucesr
     lucesr = Label(Lienzo,text="  A  ",font=('Agency FB',18),bg='yellow',fg='black')
     lucesr.place(x=665,y=95)
         
@@ -126,39 +130,39 @@ def luces_frontales():
     global lf
     if lf==1:
         lf=0
-        lucesf.config(text=" E ")
+        lucesf.config(text="  E  ")
     else:
         lf=1
-        lucesf.config(text=" A ")
+        lucesf.config(text="  A  ")
     Thread(target=enviar_mensajes,args=(["lf:",lf])).start()    
 def luces_traseras():
     global lb
     if lb==1:
         lb=0
-        lucesb.config(text=" E ")
+        lucesb.config(text="  E  ")
     else:
         lb=1
-        lucesb.config(text=" A ")
+        lucesb.config(text="  A  ")
     Thread(target=enviar_mensajes,args=(["lb:",lb])).start()
     
 def luces_izquierda():
     global ll
     if ll==1:
         ll=0
-        lucesl.config(text=" E ")
+        lucesl.config(text="  E  ")
     else:
         ll=1
-        lucesl.config(text=" A ")
+        lucesl.config(text="  A  ")
     Thread(target=enviar_mensajes,args=(["ll:",ll])).start()
 
 def luces_derecha():
     global lr
     if lr==1:
         lr=0
-        lucesr.config(text=" E ")
+        lucesr.config(text="  E  ")
     else:
         lr=1
-        lucesr.config(text=" A ")
+        lucesr.config(text="  A  ")
     Thread(target=enviar_mensajes,args=["lr:",lr]).start()
 
 def izquierda():
