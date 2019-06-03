@@ -188,7 +188,7 @@ def centro():
     Thread(target=enviar_mensajes,args=["dir:",dr]).start()
 
 def mov_especial():
-    Thread(target=enviar_mensajes,args=["indeciso;"]).start()
+    Thread(target=enviar_mensajes,args=["indeciso;",0]).start()
     
     
 
