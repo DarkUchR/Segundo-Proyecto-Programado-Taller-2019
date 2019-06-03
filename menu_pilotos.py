@@ -5,6 +5,7 @@ import os
 import time
 from tkinter import messagebox
 from test_drive import main_test_drive
+from test_drive import get_btlv
 
 #Se crea la ventana y se configura
 
@@ -409,6 +410,7 @@ def get_mousey():
 
 def cambiar_test():
     leave()
+    pilot_waiting_copy=pilot_waiting
     if canvas==1:
         canvas_ventana1.pack_forget()
         scrollbar.pack_forget()
@@ -418,13 +420,13 @@ def cambiar_test():
     piloto_img=cargar_imagen(pilotos[pilot_waiting][1][:-1]+".png")
     pais_img=cargar_imagen(pilotos[pilot_waiting][3][:-1]+".png")
     main_test_drive(ventana1, pilotos[pilot_waiting][0],pilotos[pilot_waiting][3],carros[pilot_waiting][4],piloto_img,pais_img )
-    return_menu_pilotos()
+    return_menu_pilotos(pilot_waiting)
     
 def leave():
     global animationFlag
     animationFlag=False
     
-def return_menu_pilotos():
+def return_menu_pilotos(carro_ind):
     try:
         ventana1.title("Menu Pilotos")
         ventana1.minsize(1000,800)
@@ -436,6 +438,14 @@ def return_menu_pilotos():
             scrollbar2.pack( side = RIGHT, fill=Y )
             canvas2_ventana1.pack()
 
+        btlv=get_btlv()
+        if btlv!=-1 and btlv<70:
+            carro=carros[carro_ind]
+            carro[9]="Descargado\n"
+            if canvas==1:
+                actualizar_carros(carro,carro_ind,canvas_ventana1)
+            else:
+                actualizar_carros(carro,carro_ind,canvas2_ventana1)                
         thread1= Thread(target=colorear,args=())
         thread1.start()
         ventana1.protocol("WM_DELETE_WINDOW", _delete_window)
@@ -508,7 +518,6 @@ def actualizar_carros(carro,carro_indice,canvas_actual):
     carros_lista=[]
     for i in range(len(carros)):
         carros_lista+= carros[i][:14]
-        
     car_texto.writelines(carros_lista)
     car_texto.close()
     pil_texto= open("Pilotos.txt","w")

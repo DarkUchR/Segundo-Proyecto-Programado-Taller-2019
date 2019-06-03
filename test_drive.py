@@ -85,6 +85,7 @@ def main_test_drive(ventana,nombre, nacionalidad, escuderia, piloto_img, pais_im
     piloto=Lienzo.create_image(40,50,image = piloto_img ,anchor = NW)
     pais=Lienzo.create_image(120,70,image = pais_img ,anchor = NW)
 
+    global btlv
     global ll
     global lr
     global lf
@@ -95,6 +96,7 @@ def main_test_drive(ventana,nombre, nacionalidad, escuderia, piloto_img, pais_im
     lr=1
     lf=1
     lb=1
+    btlv=-1
 
     global lucesf
     lucesf = Label(Lienzo,text="  A  ",font=('Agency FB',18),bg='white',fg='black')
@@ -196,6 +198,7 @@ def mov_especial():
 
     
 def telemetria():
+    global btlv
     while carro.loop:
         recibido=False
         msg_recibido="-1"
@@ -261,7 +264,8 @@ def cambios(texto,inicial):
         return False
     
     
-    
+def get_btlv():
+    return btlv
 def regresar_test_drive():
     global carro
     carro.loop=False
