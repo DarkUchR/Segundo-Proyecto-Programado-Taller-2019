@@ -64,9 +64,6 @@ def main_test_drive(ventana):
     salir = Button(Lienzo,text='Volver',command= regresar_test_drive, fg='white',bg='black', font=('Agency FB',14))
     salir.place(x=850,y=400)
 
-    luces = Label(Lienzo,text="Luces:",font=('Agency FB',12),bg='black',fg='white')
-    luces.place(x=595,y=65)
-
     global pwm
     pwm = Label(Lienzo,text="pwm: "+str(potencia),font=('Agency FB',14),bg='white',fg='black')
     pwm.place(x=355,y=358)
@@ -83,139 +80,154 @@ def main_test_drive(ventana):
     global lr
     global lf
     global lb
+    global dr
+    dr=0
     ll=0
     lr=0
     lf=0
     lb=0
-    thread_telemetria=Thread(target=enviar_mensajes,args=["indeciso;"])
+    thread_telemetria=Thread(target=enviar_mensajes,args=["indeciso;",0])
     thread_telemetria.start()
 
     root.protocol("WM_DELETE_WINDOW", _delete_window)
     root.mainloop()
 
 #Funciones asociadas a cada boton de comandos:
-
+        
 #funcion para acelerar de 50 en 50, que muestra la potencia en pantalla
 def aceleracion():
     global potencia
     global pwm
     potencia+=50
     pwm.config(text= "pwm: "+str(potencia))
-    Thread(target=enviar_mensajes,args=(["pwm: "+str(potencia)+";"])).start()
+    Thread(target=enviar_mensajes,args=(["pwm:",potencia])).start()
 
 def send_reversa():
-
-    Thread(target=enviar_mensajes,args=(["pwm:0;"])).start()
     global potencia
+    potencia=0    
+    Thread(target=enviar_mensajes,args=(["pwm:",potencia])).start()
     global pwm
-    potencia=0
     pwm.config(text= "pwm: 0")
 
 def luces_frontales():
     global lf
-    Thread(target=enviar_mensajes,args=(["lf:"+str(lf)+";"])).start()
     if lf==1:
-        luces = Label(Lienzo,text="  E  ",font=('Agency FB',18),bg='white',fg='black')
-        luces.place(x=515,y=95)
         lf=0
     else:
-        luces = Label(Lienzo,text="  A  ",font=('Agency FB',18),bg='white',fg='black')
-        luces.place(x=515,y=95)
         lf=1
-
+    Thread(target=enviar_mensajes,args=(["lf:",lf])).start()    
 def luces_traseras():
     global lb
-    Thread(target=enviar_mensajes,args=(["lb:"+str(lb)+";"])).start()
     if lb==1:
-        luces = Label(Lienzo,text="  E  ",font=('Agency FB',18),bg='red',fg='black')
-        luces.place(x=565,y=95)
         lb=0
     else:
-        luces = Label(Lienzo,text="  A  ",font=('Agency FB',18),bg='red',fg='black')
-        luces.place(x=565,y=95)
         lb=1
-
+    Thread(target=enviar_mensajes,args=(["lb:",lb])).start()
+    
 def luces_izquierda():
     global ll
-    Thread(target=enviar_mensajes,args=(["ll:"+str(ll)+";"])).start()
     if ll==1:
-        luces = Label(Lienzo,text="  E  ",font=('Agency FB',18),bg='yellow',fg='black')
-        luces.place(x=615,y=95)
         ll=0
     else:
-        luces = Label(Lienzo,text="  A  ",font=('Agency FB',18),bg='yellow',fg='black')
-        luces.place(x=615,y=95)
         ll=1
+    Thread(target=enviar_mensajes,args=(["ll:",ll])).start()
 
 def luces_derecha():
     global lr
-    Thread(target=enviar_mensajes,args=["lr:"+str(lr)+";"]).start()
     if lr==1:
-        luces = Label(Lienzo,text="  E  ",font=('Agency FB',18),bg='yellow',fg='black')
-        luces.place(x=665,y=95)
         lr=0
     else:
-        luces = Label(Lienzo,text="  A  ",font=('Agency FB',18),bg='yellow',fg='black')
-        luces.place(x=665,y=95)
         lr=1
+    Thread(target=enviar_mensajes,args=["lr:",lr]).start()
 
 def izquierda():
-    Thread(target=enviar_mensajes,args=["dir:1;"]).start()
-
+    global dr
+    dr=1
+    Thread(target=enviar_mensajes,args=["dir:",dr]).start()
+    
 def derecha():
-    Thread(target=enviar_mensajes,args=["dir:-1;"]).start()
+    global dr
+    dr=-1
+    Thread(target=enviar_mensajes,args=["dir:",dr]).start()
 
 def centro():
-    Thread(target=enviar_mensajes,args=["dir:0;"]).start()
+    global dr
+    dr=0
+    Thread(target=enviar_mensajes,args=["dir:",dr]).start()
 
 def mov_especial():
-
     Thread(target=enviar_mensajes,args=["indeciso;"]).start()
+    
+    
 
-
-
-
+    
 def telemetria():
     while carro.loop:
-        sense= enviar_mensajes("sense;")
-        if sense[0:4]=="blvl":
+        recibido=False
+        msg_recibido="-1"
+        while not(recibido) and errores<5 and carro.loop:
+            ide = carro.send("sense;")
+            while msg_recibido =="-1" and carro.loop:
+                msg_recibido = carro.readById(ide)
+                time.sleep(0.200)
+            if msg_recibido[0:4]=="blvl":
+                recibido=True
+            else:
+                errores+=1                
+        if errores==5:
+            sense= "-1"
+        else:
+            sense= msg_recibido
             btlv=sense.split(";")[0]
             luz= sense.split(";")[1]
-
+            
             iluminacion.config(text="Luz: "+luz)
             btr.config(text="Bateria: "+brlv)
         time.sleep(30)
+        
 
-
-def enviar_mensajes(mensaje):
+def enviar_mensajes(texto,variable):
     errores=0
     recibido=False
-    carro.send(mensaje)
+    if texto[-1:]==":":
+        mensaje=texto+str(variable)+";"
+    else:
+        mensaje=texto
     msg_recibido="-1"
     while not(recibido) and errores<5 and carro.loop:
         ide = carro.send(mensaje)
         while msg_recibido =="-1" and carro.loop:
             msg_recibido = carro.readById(ide)
             time.sleep(0.200)
-            print("-1")
-        print(msg_recibido)
+        new_value=cambios(texto, variable)
         if msg_recibido=="ok":
             recibido=True
-        elif msg_recibido[0:4]=="blvl":
-            recibido=True
+        if new_value:
+            break
         else:
-            errores+=1
+            errores+=1            
 
-
-    if errores==5 or mensaje!="sense;":
-        return "-1"
+def cambios(texto,inicial):
+    variable=inicial
+    if texto=="lr:":
+        variable=lr
+    elif texto=="ll:":
+        variable=ll
+    elif texto=="lf:":
+        variable=lf
+    elif texto=="lb:":
+        variable=lb
+    elif texto== "pwm:":
+        variable = pwm
+    elif texto== "dir:":
+        variable = dr
+    if str(inicial)!=str(variable):
+        return True
     else:
-        return msg_recibido
-
-
-
-
-
+        return False
+    
+    
+    
 def regresar_test_drive():
     global carro
     carro.loop=False
@@ -228,3 +240,5 @@ def _delete_window():
     carro.loop=False
     time.sleep(0.5)
     root.destroy()
+
+
