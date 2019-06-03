@@ -64,6 +64,9 @@ def main_test_drive(ventana):
     salir = Button(Lienzo,text='Volver',command= regresar_test_drive, fg='white',bg='black', font=('Agency FB',14))
     salir.place(x=850,y=400)
 
+    luces = Label(Lienzo,text="Luces:",font=('Agency FB',12),bg='black',fg='white')
+    luces.place(x=595,y=65)
+
     global pwm
     pwm = Label(Lienzo,text="pwm: "+str(potencia),font=('Agency FB',14),bg='white',fg='black')
     pwm.place(x=355,y=358)
