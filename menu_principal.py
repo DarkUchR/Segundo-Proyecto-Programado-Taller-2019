@@ -50,7 +50,22 @@ def return_principal():
     try:
         principal.title("Inicio")
         principal.minsize(1000,700)
-        principal.resizable(width=NO,height=NO)    
+        principal.resizable(width=NO,height=NO)
+        
+        escuderia_file= open("Escuderia.txt","r")
+        escuderia=escuderia_file.readlines()
+        escuderia_file.close
+        PA = escuderia[3][:-1]+"\n" +escuderia[4][:-1]
+        AH = escuderia[5][:-1]
+        PD = escuderia[7][:-1]+"\n" +escuderia[8][:-1]
+        IGE = escuderia[6][:-1]
+        VD= escuderia[9][:-1]+"\n" +escuderia[10][:-1]
+        canvas.itemconfig(vd_canvas,text= VD)
+        canvas.itemconfig(indices3,text= IGE)
+        canvas.itemconfig(pd_canvas, text =PD)
+        canvas.itemconfig(ah_canvas,AH)
+        canvas.itemconfig(pa_canvas,text = PA)
+
         principal.protocol("WM_DELETE_WINDOW", _delete_window)
         principal.mainloop()
     except:
@@ -151,16 +166,19 @@ canvas.create_line(345, 45, 345, 600, fill="#000000", dash=(7, 4))
 canvas.create_line(650, 45, 650, 600, fill="#000000", dash=(7, 4))
 
 #Creación de archivo de texto para trabajar los datos configurables
-PA = "Franklin Wart \nJhon Sans"
-AH = "BT49 \nBT50 \nBMW-269 \nBMW316i"
-PD = "Franklin Wart"
+
+PA = escuderia[3][:-1]+"\n" +escuderia[4][:-1]
+AH = escuderia[5][:-1]
+PD = escuderia[7][:-1]+"\n" +escuderia[8][:-1]
 AC = "2019"
-IGE = "0,89"
+IGE = escuderia[6][:-1]
+VD= escuderia[9][:-1]+"\n" +escuderia[10][:-1]
 indices3=canvas.create_text(350, 20+pat1.height()+pat2.height()+40,text= str(IGE), font=("Montserrat-Regular",14), fill= "Dark Blue", anchor=NW)
 canvas.create_text(940, 11, text = str(AC), font=("Montserrat-Regular",14),fill= "Light Green", anchor=NW)
-canvas.create_text(12, 380, text = str(PD), font=("Montserrat-Regular",14),fill= "Dark Blue", anchor=NW)
-canvas.create_text(725, 125, text = str(AH), font=("Montserrat-Regular",14),fill= "Dark Blue", anchor=NW)
-canvas.create_text(10, 200, text = str(PA), font=("Montserrat-Regular",14),fill= "Dark Blue", anchor=NW)
+pd_canvas=canvas.create_text(12, 380, text = str(PD), font=("Montserrat-Regular",14),fill= "Dark Blue", anchor=NW)
+ah_canvas=canvas.create_text(725, 125, text = str(AH), font=("Montserrat-Regular",14),fill= "Dark Blue", anchor=NW)
+pa_canvas=canvas.create_text(10, 200, text = str(PA), font=("Montserrat-Regular",14),fill= "Dark Blue", anchor=NW)
+vd_canvas=canvas.create_text(735, 245, text = str(VD), font=("Montserrat-Regular",14),fill= "Dark Blue", anchor=NW)
 
 
 #Funciones
