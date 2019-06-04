@@ -172,6 +172,8 @@ def main_menu_pilotos(root):
     orden_rep=1
     orden_eficiencia=1
 
+    global poder_elegir
+    poder_elegir=True    
     ventana1.bind("<Button-1>", leftclick)
     thread1= Thread(target=colorear,args=())
     thread1.start()
@@ -215,7 +217,7 @@ def actualizar():
         canvas_ventana1.itemconfig(pilotos[i][17],text=pilotos[i][9])
         canvas_ventana1.coords(pilotos[i][18],890,65+78*i)
         canvas_ventana1.itemconfig(pilotos[i][18],text=pilotos[i][10])
-
+        
         canvas2_ventana1.coords(carros[i][14],70,55+78*i)
         canvas2_ventana1.coords(carros[i][15],510,40+78*i)
         canvas2_ventana1.coords(carros[i][16],285,65+78*i)
@@ -328,7 +330,7 @@ def leftclick(event):
     y = get_mousey()
     if  1<x<920:
         for i in range(22):
-            if 40+78*i<y<32+78*(i+1):
+            if 40+78*i<y<32+78*(i+1) and poder_elegir:
                 if (canvas==1 and canvas_ventana1.itemcget(rectangulos1[i], "fill")=="#b5b5bc") or (canvas==2 and canvas2_ventana1.itemcget(rectangulos2[i], "fill")=="#b5b5bc"):
                     deshabilitar_eleccion(i)
                 else:
@@ -411,6 +413,8 @@ def get_mousey():
 def cambiar_test():
     leave()
     pilot_waiting_copy=pilot_waiting
+    global poder_elegir
+    poder_elegir=False
     if canvas==1:
         canvas_ventana1.pack_forget()
         scrollbar.pack_forget()
@@ -447,6 +451,9 @@ def return_menu_pilotos(carro_ind):
             else:
                 actualizar_carros(carro,carro_ind,canvas2_ventana1)                
         thread1= Thread(target=colorear,args=())
+
+        global poder_elegir
+        poder_elegir=True
         thread1.start()
         ventana1.protocol("WM_DELETE_WINDOW", _delete_window)
         ventana1.mainloop()
@@ -479,6 +486,8 @@ def cambiar_menu_pilotos():
 
 
 def devolverse(canvas_actual):
+    global poder_elegir
+    poder_elegir=True
     if canvas==1:
         canvas_actual.pack_forget()
         scrollbar.pack( side = RIGHT, fill=Y )
@@ -534,6 +543,8 @@ def regresar_principal():
     global animationFlag
     animationFlag=False
     time.sleep(0.5)
+    global poder_elegir
+    poder_elegir=False
     if canvas==1:
         canvas_ventana1.pack_forget()
         scrollbar.pack_forget()
@@ -550,7 +561,8 @@ def editar_piloto_ventana(piloto,piloto_ind):
     global cara
     cara= cargar_imagen(piloto[1][:-1]+".png")
     imagen_logo = canvas3_ventana1.create_image(0,0,image = logo ,anchor = NW)
-
+    global poder_elegir
+    poder_elegir=False
 
     posy=200
     deltay=50
@@ -687,7 +699,8 @@ def editar_carro_ventana(carro,carro_ind):
     global carro_img
     carro_img= cargar_imagen(carro[4][:-1]+".png")
     imagen_logo = canvas4_ventana1.create_image(0,0,image = logo ,anchor = NW)
-
+    global poder_elegir
+    poder_elegir=False
 
     posy=150
     deltay=50

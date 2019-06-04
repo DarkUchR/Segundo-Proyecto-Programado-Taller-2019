@@ -51,9 +51,8 @@ def return_principal():
         principal.title("Inicio")
         principal.minsize(1000,700)
         principal.resizable(width=NO,height=NO)    
-        principal.mainloop()
-        inicio()
         principal.protocol("WM_DELETE_WINDOW", _delete_window)
+        principal.mainloop()
     except:
         winsound.PlaySound(None, winsound.SND_FILENAME)
         
@@ -61,6 +60,7 @@ def cambiar_pilotos():
     leave()
     main_menu_pilotos(principal)
     return_principal()
+
     
 
 def cambiar_about():
@@ -127,22 +127,24 @@ def logo_f1():
     x= 0
     y= 0
     mov_x = 5
-    mov_y = 0
-    animation_Flag=True
-    while(animation_Flag):
+    while animation_Flag and x>=0:
         x += mov_x
-        y += mov_y
         try:
             canvas.move(img,mov_x,y)
         except:
             pass
-        if x>235 or x<abs(mov_x):
-            mov_x*=-1
-            mov_y*=-1
-            
+        if x>235 or x<0:
+            mov_x*=-1                
         time.sleep(0.033)
-            
+    try:
+        canvas.coords(img, (0,0))
+    except:
+        pass
+    
 def inicio():
+    global animation_Flag
+    animation_Flag=True
+    canvas.coords(img, (0,0))
     thread1 = Thread(target=logo_f1, args=())
     thread1.start()
     
@@ -153,8 +155,7 @@ def _delete_window():
     winsound.PlaySound(None, winsound.SND_FILENAME)
     time.sleep(0.5)
     principal.destroy()
-      
-
+         
 musica()
 inicio()
 principal.protocol("WM_DELETE_WINDOW", _delete_window)

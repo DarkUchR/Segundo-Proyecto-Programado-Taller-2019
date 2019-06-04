@@ -47,6 +47,8 @@ def main_test_drive(ventana,nombre, nacionalidad, escuderia, piloto_img, pais_im
     Frenar.place(x=885,y=40)
     Izq = Button(Lienzo,text='⇽',command= izquierda, fg='white',bg='black', font=('Agency FB',14))
     Izq.place(x=810,y=100)
+    Centr=Button(Lienzo,text=' ',command= centro, fg='white',bg='black', font=('Agency FB',14))
+    Centr.place(x=867,y=100)
     Der = Button(Lienzo,text='⇾',command= derecha, fg='white',bg='black', font=('Agency FB',14))
     Der.place(x=910,y=100)
     Celeb = Button(Lienzo,text='Celebrar',command= 1, fg='white',bg='black', font=('Agency FB',14))
@@ -68,13 +70,21 @@ def main_test_drive(ventana,nombre, nacionalidad, escuderia, piloto_img, pais_im
     pwm = Label(Lienzo,text="pwm: "+str(potencia),font=('Agency FB',14),bg='white',fg='black')
     pwm.place(x=355,y=358)
 
-    global btr
-    btr = Label(Lienzo,text="Bateria: ",font=('Agency FB',14),bg='white',fg='black')
-    btr.place(x=470,y=358)
+    bat_img= PhotoImage(file="Imagenes/btr.png")
+    global on
+    global off
+    global luz_img
+    
+    on= PhotoImage(file="Imagenes/on.png")
+    off= PhotoImage(file="Imagenes/off.png")
+    bat_lienzo=Lienzo.create_image(40,195,image = bat_img ,anchor = NW)
+    luz_img=Lienzo.create_image(60,240,image = on ,anchor = NW)
 
-    global iluminacion
-    iluminacion = Label(Lienzo,text="Luz: ",font=('Agency FB',14),bg='white',fg='black')
-    iluminacion.place(x=250,y=358)
+    global bat
+    global bat_text
+    bat_text = Label(Lienzo, text= "100%", font=("Agency FB",15), bg="light gray",fg="black")
+    bat_text.place(x=100,y=195)    
+    bat=Lienzo.create_rectangle(45, 200,45+42,200+18, fill='green',outline="green")
 
     nombre_label = Label(Lienzo,text=nombre[:-1],font=('Agency FB',14),bg='gray',fg='white')
     nombre_label.place(x=40,y=125)
@@ -96,7 +106,7 @@ def main_test_drive(ventana,nombre, nacionalidad, escuderia, piloto_img, pais_im
     lr=1
     lf=1
     lb=1
-    btlv=-1
+    btlv=100
 
     global lucesf
     lucesf = Label(Lienzo,text="  A  ",font=('Agency FB',18),bg='white',fg='black')
@@ -126,9 +136,10 @@ def main_test_drive(ventana,nombre, nacionalidad, escuderia, piloto_img, pais_im
 def aceleracion():
     global potencia
     global pwm
-    potencia+=50
-    pwm.config(text= "pwm: "+str(potencia))
-    Thread(target=enviar_mensajes,args=(["pwm:",potencia])).start()
+    if potencia<=1000:
+        potencia+=50
+        pwm.config(text= "pwm: "+str(potencia))
+        Thread(target=enviar_mensajes,args=(["pwm:",potencia])).start()
 
 def send_reversa():
     global potencia
@@ -215,11 +226,26 @@ def telemetria():
             sense= "-1"
         else:
             sense= msg_recibido
-            btlv=sense.split(";")[0]
-            luz= sense.split(";")[1]
+            btlv=int(sense.split(";")[0][5:])
+            luz= sense.split(";")[1][4:]
             
-            iluminacion.config(text="Luz: "+luz)
-            btr.config(text="Bateria: "+brlv)
+            if luz=="1":
+                Lienzo.itemconfig(luz_img,image = on)
+            else:
+                Lienzo.itemconfig(luz_img,image = off)
+            if btlv>=0:
+                Lienzo.coords(bat,45, 200,45+(42/btlv),200+18)
+                Lienzo.itemconfig(bat_text,text=str(btlv)+"%")
+                if btlv == 100:
+                    Lienzo.itemconfig(bat,fill="green",outline="green")
+                elif 74<btlv<100:
+                    Lienzo.itemconfig(bat,fill="Light Green",outline="Light Green")
+                elif 49<btlv<75:
+                    Lienzo.itemconfig(bat,fill="Yellow",outline="Yellow")
+                elif 24<btlv<50:
+                    Lienzo.itemconfig(bat,fill="Orange",outline="Orange")
+                else:
+                    Lienzo.itemconfig(bat,fill="Red",outline="Red")
         time.sleep(30)
         
 
