@@ -51,7 +51,7 @@ def main_test_drive(ventana,nombre, nacionalidad, escuderia, piloto_img, pais_im
     Centr.place(x=867,y=100)
     Der = Button(Lienzo,text='⇾',command= derecha, fg='white',bg='black', font=('Agency FB',14))
     Der.place(x=910,y=100)
-    Celeb = Button(Lienzo,text='Celebrar',command= 1, fg='white',bg='black', font=('Agency FB',14))
+    Celeb = Button(Lienzo,text='Celebrar',command= celebrar, fg='white',bg='black', font=('Agency FB',14))
     Celeb.place(x=840,y=300)
     Mov = Button(Lienzo,text='Mov.Especial',command= mov_especial, fg='white',bg='black', font=('Agency FB',14))
     Mov.place(x=822,y=350)
@@ -273,12 +273,10 @@ def celebrar():
     especial=especial.split(";")
     global ll
     global lr
-    global lb
     ll=1
     lr=1
-    lb=1
     for comando in especial:
-        if comando[0:1]=="w" :
+        if comando[0:1]=="w":
             time.sleep(comando[1:])
         elif comando[0:2]=="ll":
             luces_izquierda()
