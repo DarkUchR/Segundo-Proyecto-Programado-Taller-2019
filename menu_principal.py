@@ -44,6 +44,7 @@ pat2_canvas=canvas.create_image(350, 20+pat1.height(), anchor= NW, image= pat2)
 def leave():
     global animation_Flag
     animation_Flag=False
+    canvas.pack_forget()
     principal.quit()
     
 def return_principal():
@@ -51,7 +52,7 @@ def return_principal():
         principal.title("Inicio")
         principal.minsize(1000,700)
         principal.resizable(width=NO,height=NO)
-        
+        canvas.pack()
         escuderia_file= open("Escuderia.txt","r")
         escuderia=escuderia_file.readlines()
         escuderia_file.close
@@ -63,11 +64,13 @@ def return_principal():
         PD = escuderia[8][:-1]+"\n" +escuderia[9][:-1]
         IGE = str(int(escuderia[6][:-1])*100//int(escuderia[7][:-1]))
         VD= escuderia[10][:-1]+"\n" +escuderia[11][:-1]
+        canvas.itemconfig(pa_canvas,text =PA)
+        canvas.itemconfig(ah_canvas,text=AH)
         canvas.itemconfig(vd_canvas,text= VD)
         canvas.itemconfig(indices3,text= IGE)
         canvas.itemconfig(pd_canvas, text =PD)
-        canvas.itemconfig(ah_canvas,AH)
-        canvas.itemconfig(pa_canvas,text = PA)
+        
+       
 
         principal.protocol("WM_DELETE_WINDOW", _delete_window)
         principal.mainloop()

@@ -3,13 +3,13 @@ Imagenes/michelin.png
 Imagenes/pirelli.gif
 Sam Bird
 Jean Vergne
-BT49/BT50/BMW-269/BMW316i/
+BT49/BT50/BMW-269/BMW316i
 8
 26
 Sam Bird
 Jean Vergne
-BMW FIRE
-BMW FIRE
+BMW HYU
+BMW Fire
 
 
 
