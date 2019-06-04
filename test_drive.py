@@ -9,7 +9,7 @@ from tkinter import messagebox
 from WiFiClient import NodeMCU
 
 
-def main_test_drive(ventana,nombre, nacionalidad, escuderia, piloto_img, pais_img):
+def main_test_drive(ventana,nombre, nacionalidad, escuderia, piloto_img, pais_img, mov_especial):
     #Ventana principal
     global root
     root=ventana
@@ -43,7 +43,7 @@ def main_test_drive(ventana,nombre, nacionalidad, escuderia, piloto_img, pais_im
     Acelerar = Button(Lienzo,text='Acelerar',command= aceleracion, fg='white',bg='black', font=('Agency FB',14))
     Acelerar.place(x=795,y=40)
     #boton para frenar, pero tiene el comando sense para probarlo era nada mas
-    Frenar = Button(Lienzo,text=' Frenar ',command= send_reversa, fg='white',bg='black', font=('Agency FB',14))
+    Frenar = Button(Lienzo,text='Desacelerar',command= send_reversa, fg='white',bg='black', font=('Agency FB',14))
     Frenar.place(x=885,y=40)
     Izq = Button(Lienzo,text='⇽',command= izquierda, fg='white',bg='black', font=('Agency FB',14))
     Izq.place(x=810,y=100)
@@ -94,6 +94,8 @@ def main_test_drive(ventana,nombre, nacionalidad, escuderia, piloto_img, pais_im
     bat_text.place(x=100,y=195)    
     bat=Lienzo.create_rectangle(45, 200,45+42,200+18, fill='green',outline="green")
 
+    global especial
+    especial=mov_especial
     nombre_label = Label(Lienzo,text=nombre[:-1],font=('Agency FB',14),bg='gray',fg='white')
     nombre_label.place(x=40,y=125)
     escuderia_label = Label(Lienzo,text= escuderia[:-3],font=('Agency FB',14),bg='gray',fg='white')
@@ -121,7 +123,7 @@ def main_test_drive(ventana,nombre, nacionalidad, escuderia, piloto_img, pais_im
     lucesr = Label(Lienzo,text="  A  ",font=('Agency FB',18),bg='yellow',fg='black')
     lucesr.place(x=665,y=95)
 
-
+    global cola
     global btlv
     global ll
     global lr
@@ -134,8 +136,11 @@ def main_test_drive(ventana,nombre, nacionalidad, escuderia, piloto_img, pais_im
     lf=1
     lb=1
     btlv=100
-    
-    thread_telemetria=Thread(target=enviar_mensajes,args=["indeciso;",0])
+    cola=[]
+
+    thread_cola=Thread(target=enviar_cola,args=())
+    thread_cola.start()
+    thread_telemetria=Thread(target=telemetria,args=())
     thread_telemetria.start()
     root.bind('<Up>', aceleracion)
     root.bind('<Left>', izquierda)
@@ -149,19 +154,36 @@ def main_test_drive(ventana,nombre, nacionalidad, escuderia, piloto_img, pais_im
 #funcion para acelerar de 50 en 50, que muestra la potencia en pantalla
 def aceleracion():
     global potencia
+    global lb
     if potencia<=1000:
         potencia+=50
-        Thread(target=enviar_mensajes,args=(["pwm:",potencia])).start()
-        indice=potencia//50-1
-        Lienzo.itemconfig(pwm_canvases[indice],image=pwm_imgs[indice])
+        cola.append("pwm:"+str(potencia)+";")
+        indice=potencia//50
+        if indice<=0:
+            if indice==0:
+                lb=0
+                luces_traseras()
+            indice=abs(indice)
+            Lienzo.itemconfig(pwm_canvases[indice],image="")
+        else:
+            indice=indice-1
+            Lienzo.itemconfig(pwm_canvases[indice],image=pwm_imgs[indice])
     
 def send_reversa():
     global potencia
-    potencia=0    
-    Thread(target=enviar_mensajes,args=(["pwm:",potencia])).start()
-    for i in range(21):
-        Lienzo.itemconfig(pwm_canvases[i],image="")
-        
+    global lb
+    if potencia>=-1000:
+        potencia-=50
+        cola.append("pwm:"+str(potencia)+";")
+        indice=potencia//50
+        if indice>=0:
+            Lienzo.itemconfig(pwm_canvases[indice],image="")
+        else:
+            if indice==-1:
+                lb=1
+                luces_traseras()
+            indice=abs(indice)-1
+            Lienzo.itemconfig(pwm_canvases[indice],image=pwm_imgs[indice])
 
 def luces_frontales():
     global lf
@@ -171,7 +193,7 @@ def luces_frontales():
     else:
         lf=1
         lucesf.config(text="  A  ")
-    Thread(target=enviar_mensajes,args=(["lf:",lf])).start()    
+    cola.append("lf:")
 def luces_traseras():
     global lb
     if lb==1:
@@ -180,67 +202,104 @@ def luces_traseras():
     else:
         lb=1
         lucesb.config(text="  A  ")
-    Thread(target=enviar_mensajes,args=(["lb:",lb])).start()
+    cola.append("lb:")
     
 def luces_izquierda():
     global ll
     if ll==1:
         ll=0
         lucesl.config(text="  E  ")
+        actualizar_luces_izquierda()
+
     else:
         ll=1
         lucesl.config(text="  A  ")
-    Thread(target=enviar_mensajes,args=(["ll:",ll])).start()
+
 
 def luces_derecha():
     global lr
     if lr==1:
         lr=0
         lucesr.config(text="  E  ")
+        actualizar_luces_derecha()
+
     else:
         lr=1
         lucesr.config(text="  A  ")
-    Thread(target=enviar_mensajes,args=["lr:",lr]).start()
+    
+def actualizar_luces_derecha():
+    luz=1
+    while lr==0 and carro.loop:
+        enviar_mensajes("lr:"+str(luz)+";")
+        time.sleep(0.5)
+        if luz==1:
+            luz=0
+        else:
+            luz=1
 
+    enviar_mensajes("lr:1;")
+
+
+def actualizar_luces_izquierda():
+    luz=1
+    while ll==0 and carro.loop:
+        enviar_mensajes("ll:"+str(luz)+";")
+        time.sleep(1)
+        if luz==1:
+            luz=0
+        else:
+            luz=1
+    enviar_mensajes("ll:1;")
+            
 def izquierda():
     global dr
     dr=1
-    Thread(target=enviar_mensajes,args=["dir:",dr]).start()
+    cola.append("dir:")
     
 def derecha():
     global dr
     dr=-1
-    Thread(target=enviar_mensajes,args=["dir:",dr]).start()
-
+    cola.append("dir:")
+    
 def centro():
     global dr
     dr=0
-    Thread(target=enviar_mensajes,args=["dir:",dr]).start()
-
+    cola.append("dir:")
+    
 def mov_especial():
-    Thread(target=enviar_mensajes,args=["indeciso;",0]).start()
+    cola.append("indeciso;")
     
-    
-
+def celebrar():
+    especial=especial.split(";")
+    global ll
+    global lr
+    global lb
+    ll=1
+    lr=1
+    lb=1
+    for comando in especial:
+        if comando[0:1]=="w" :
+            time.sleep(comando[1:])
+        elif comando[0:2]=="ll":
+            luces_izquierda()
+        elif comando[0:2]=="lr":
+            luces_derecha()
+        elif comando.split(":")[0]=="pwm":
+            if int(comando.split(":")[1])<0:
+                enviar_mensajes("lb:0;","cola")
+            else:
+                enviar_mensajes("lb:1;","cola")                
+            enviar_mensajes(comando+";","cola")    
+        else:
+            enviar_mensajes(comando+";","cola")
+                    
     
 def telemetria():
     global btlv
     while carro.loop:
-        recibido=False
-        msg_recibido="-1"
-        while not(recibido) and errores<5 and carro.loop:
-            ide = carro.send("sense;")
-            while msg_recibido =="-1" and carro.loop:
-                msg_recibido = carro.readById(ide)
-                time.sleep(0.200)
-            if msg_recibido[0:4]=="blvl":
-                recibido=True
-            else:
-                errores+=1                
-        if errores==5:
-            sense= "-1"
-        else:
-            sense= msg_recibido
+        recepcion= enviar_mensajes("sense;")
+        if recepcion[1]:
+            sense=recepcion[0]
             btlv=int(sense.split(";")[0][5:])
             luz= sense.split(";")[1][4:]
             
@@ -264,45 +323,55 @@ def telemetria():
         time.sleep(30)
         
 
-def enviar_mensajes(texto,variable):
+def enviar_cola():
+    global cola
+    while carro.loop:
+        if len(cola)>0:
+            mensaje=cola[0]
+            if mensaje=="pwm:":
+                mensaje="pwm:"+str(potencia)+";"
+                cola=delete("pwm:")
+            elif mensaje =="dir:":
+                mensaje="dir:"+str(dr)+";"
+                cola=delete("dir:")
+            elif mensaje =="lf:":
+                mensaje="lf:"+str(lf)+";"
+                cola=delete("lf:")
+            elif mensaje =="lb:":
+                mensaje="lb:"+str(lb)+";"
+                cola=delete("lb:")              
+            else:
+                cola=cola[1:]
+            enviar_mensajes(mensaje, "cola")            
+        else:
+            time.sleep(0.2)
+                             
+def enviar_mensajes(mensaje, fuente="no-cola"):
     errores=0
     recibido=False
-    if texto[-1:]==":":
-        mensaje=texto+str(variable)+";"
-    else:
-        mensaje=texto
     msg_recibido="-1"
     while not(recibido) and errores<5 and carro.loop:
         ide = carro.send(mensaje)
         while msg_recibido =="-1" and carro.loop:
             msg_recibido = carro.readById(ide)
             time.sleep(0.200)
-        new_value=cambios(texto, variable)
-        if msg_recibido=="ok":
+        if msg_recibido=="ok" or msg_recibido[0:4]=="blvl":
             recibido=True
-        if new_value:
-            break
         else:
-            errores+=1            
-
-def cambios(texto,inicial):
-    variable=inicial
-    if texto=="lr:":
-        variable=lr
-    elif texto=="ll:":
-        variable=ll
-    elif texto=="lf:":
-        variable=lf
-    elif texto=="lb:":
-        variable=lb
-    elif texto== "pwm:":
-        variable = potencia
-    elif texto== "dir:":
-        variable = dr
-    if str(inicial)!=str(variable):
-        return True
+            errores+=1
+    if errores==5 and fuente=="cola":
+        messagebox.showinfo("Error","Error de comunicacion con el carro")             
+        regresar_test_drive()
     else:
-        return False
+        return (msg_recibido,recibido)
+                
+def delete(mensaje):
+    result=[]
+    for msg in cola:
+        if msg!=mensaje:
+            result.apend(msg)
+    return result
+    
     
     
 def get_btlv():

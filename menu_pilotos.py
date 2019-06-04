@@ -64,9 +64,9 @@ def main_menu_pilotos(root):
 
     global pilotos
     pilotos=[]
-    for i in range(len(info_pilotos)//9):
+    for i in range(len(info_pilotos)//10):
 
-        piloto_simple= info_pilotos[9*i:9*(i+1)]
+        piloto_simple= info_pilotos[10*i:10*(i+1)]
         piloto_simple+=calcular_estadisticas(piloto_simple)
         pilotos.append(piloto_simple)
 
@@ -115,8 +115,8 @@ def main_menu_pilotos(root):
         imagen_edad= canvas_ventana1.create_text((295,65+78*i),font=("Arial",15), text=piloto[2],anchor = NW)
         imagen_nombre= canvas_ventana1.create_text((150,65+78*i),font=("Arial",15),text=piloto[0],anchor = NW)
         imagen_competencias= canvas_ventana1.create_text((680,65+78*i),font=("Arial",15), text=piloto[5],anchor = NW)
-        imagen_rgp= canvas_ventana1.create_text((805,65+78*i),font=("Arial",15),text=piloto[9],anchor = NW)
-        imagen_rep= canvas_ventana1.create_text((890,65+78*i),font=("Arial",15), text=piloto[10],anchor = NW)
+        imagen_rgp= canvas_ventana1.create_text((805,65+78*i),font=("Arial",15),text=piloto[10],anchor = NW)
+        imagen_rep= canvas_ventana1.create_text((890,65+78*i),font=("Arial",15), text=piloto[11],anchor = NW)
 
         piloto+=[imagen_carro1,imagen_cara1,imagen_pais1,imagen_edad, imagen_nombre, imagen_competencias,imagen_rgp, imagen_rep]
 
@@ -202,21 +202,21 @@ def actualizar():
     global paises
     paises=[]
     for i in range(len(pilotos)):
-        canvas_ventana1.coords(pilotos[i][11],480,55+78*i)
-        canvas_ventana1.coords(pilotos[i][12],70,40+78*i)
-        canvas_ventana1.coords(pilotos[i][13],370,55+78*i)
+        canvas_ventana1.coords(pilotos[i][12],480,55+78*i)
+        canvas_ventana1.coords(pilotos[i][13],70,40+78*i)
+        canvas_ventana1.coords(pilotos[i][14],370,55+78*i)
         paises= [cargar_imagen(pilotos[i][3][:-1]+".png")]+paises
-        canvas_ventana1.itemconfig(pilotos[i][13],image=paises[0])
-        canvas_ventana1.coords(pilotos[i][14],295,65+78*i)
-        canvas_ventana1.itemconfig(pilotos[i][14],text=pilotos[i][2])
-        canvas_ventana1.coords(pilotos[i][15],150,65+78*i)
-        canvas_ventana1.itemconfig(pilotos[i][15],text=pilotos[i][0])
-        canvas_ventana1.coords(pilotos[i][16],680,65+78*i)
-        canvas_ventana1.itemconfig(pilotos[i][16],text=pilotos[i][5])
-        canvas_ventana1.coords(pilotos[i][17],805,65+78*i)
-        canvas_ventana1.itemconfig(pilotos[i][17],text=pilotos[i][9])
-        canvas_ventana1.coords(pilotos[i][18],890,65+78*i)
+        canvas_ventana1.itemconfig(pilotos[i][14],image=paises[0])
+        canvas_ventana1.coords(pilotos[i][15],295,65+78*i)
+        canvas_ventana1.itemconfig(pilotos[i][15],text=pilotos[i][2])
+        canvas_ventana1.coords(pilotos[i][16],150,65+78*i)
+        canvas_ventana1.itemconfig(pilotos[i][16],text=pilotos[i][0])
+        canvas_ventana1.coords(pilotos[i][17],680,65+78*i)
+        canvas_ventana1.itemconfig(pilotos[i][17],text=pilotos[i][5])
+        canvas_ventana1.coords(pilotos[i][18],805,65+78*i)
         canvas_ventana1.itemconfig(pilotos[i][18],text=pilotos[i][10])
+        canvas_ventana1.coords(pilotos[i][19],890,65+78*i)
+        canvas_ventana1.itemconfig(pilotos[i][19],text=pilotos[i][11])
         
         canvas2_ventana1.coords(carros[i][14],70,55+78*i)
         canvas2_ventana1.coords(carros[i][15],510,40+78*i)
@@ -237,10 +237,10 @@ def actualizar():
 
 def ordenar_pilotos(valor):
     if valor== "rpg":
-        n=9
+        n=10
         comparador=pilotos
     elif valor== "rep":
-        n=10
+        n=11
         comparador=pilotos
     elif valor=="eficiencia":
         n=12
@@ -257,10 +257,10 @@ def ordenar_pilotos(valor):
     
 def ordenar_inverso_pilotos(valor):
     if valor== "rpg":
-        n=9
+        n=10
         comparador=pilotos
     elif valor== "rep":
-        n=10
+        n=11
         comparador=pilotos
     elif valor=="eficiencia":
         n=12
@@ -423,7 +423,7 @@ def cambiar_test():
         scrollbar2.pack_forget()
     piloto_img=cargar_imagen(pilotos[pilot_waiting][1][:-1]+".png")
     pais_img=cargar_imagen(pilotos[pilot_waiting][3][:-1]+".png")
-    main_test_drive(ventana1, pilotos[pilot_waiting][0],pilotos[pilot_waiting][3],carros[pilot_waiting][4],piloto_img,pais_img )
+    main_test_drive(ventana1, pilotos[pilot_waiting][0],pilotos[pilot_waiting][3],carros[pilot_waiting][4],piloto_img,pais_img,pilotos[pilot_waiting][9])
     return_menu_pilotos(pilot_waiting)
     
 def leave():
@@ -508,7 +508,7 @@ def actualizar_pilotos(piloto,piloto_indice,canvas_actual):
     pil_texto= open("Pilotos.txt","w")
     pilotos_lista=[]
     for i in range(len(pilotos)):
-        pilotos_lista+= pilotos[i][:9]
+        pilotos_lista+= pilotos[i][:10]
     pil_texto.writelines(pilotos_lista)
     pil_texto.close()
 
@@ -532,7 +532,7 @@ def actualizar_carros(carro,carro_indice,canvas_actual):
     pil_texto= open("Pilotos.txt","w")
     pilotos_lista=[]
     for i in range(len(pilotos)):
-        pilotos_lista+= pilotos[i][:9]    
+        pilotos_lista+= pilotos[i][:10]    
     pil_texto.writelines(pilotos_lista)
     pil_texto.close()
     actualizar()
@@ -695,10 +695,10 @@ def editar_piloto_ventana(piloto,piloto_ind):
             piloto[6]=str(ganados)+"\n"
             piloto[7]=str(casiganados)+"\n"
             piloto[8]=str(descalificados)+"\n"
-
+            
             estadisticas=calcular_estadisticas(piloto)
-            piloto[9]=estadisticas[0]
-            piloto[10]=estadisticas[1]
+            piloto[10]=estadisticas[0]
+            piloto[11]=estadisticas[1]
             actualizar_pilotos(piloto,piloto_ind,canvas3_ventana1)
 
     def devolverse_aux():
@@ -784,7 +784,6 @@ def editar_carro_ventana(carro,carro_ind):
         else:
             messagebox.showinfo("Error","Los sensores validos son: Luz, Bateria, Luz\Bateria, Bateria\Luz")
             error=True
-            
         if error:
             pass
         else:
