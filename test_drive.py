@@ -1,11 +1,9 @@
 #Importacion de bibliotecas
 from tkinter import*
 from threading import Thread
-import threading
 import os
 import time
 from tkinter import messagebox
-import tkinter.scrolledtext as tkscrolled
 
 #Biblioteca para el uso del carro
 from WiFiClient import NodeMCU
@@ -25,7 +23,9 @@ def main_test_drive(ventana,nombre, nacionalidad, escuderia, piloto_img, pais_im
     Lienzo=Canvas(root, width=1000, height=550, bg='light blue')
     Lienzo.pack()
 
-    imagen = PhotoImage(file = "fondo.png")
+    imagen = PhotoImage(file = "Imagenes/fondo.png")
+    bat_img= PhotoImage(file="Imagenes/btr.png")
+
     Lienzo.create_image(0,0,anchor=NW,image = imagen)
 
 
@@ -38,7 +38,7 @@ def main_test_drive(ventana,nombre, nacionalidad, escuderia, piloto_img, pais_im
     global potencia
     potencia=0
 
-
+    
     #boton para acelerar
     Acelerar = Button(Lienzo,text='Acelerar',command= aceleracion, fg='white',bg='black', font=('Agency FB',14))
     Acelerar.place(x=795,y=40)
@@ -66,17 +66,25 @@ def main_test_drive(ventana,nombre, nacionalidad, escuderia, piloto_img, pais_im
     salir = Button(Lienzo,text='Volver',command= regresar_test_drive, fg='white',bg='black', font=('Agency FB',14))
     salir.place(x=850,y=400)
 
-    global pwm
-    pwm = Label(Lienzo,text="pwm: "+str(potencia),font=('Agency FB',14),bg='white',fg='black')
-    pwm.place(x=355,y=358)
 
-    bat_img= PhotoImage(file="Imagenes/btr.png")
+    global pwm_imgs
+    global pwm_canvases
+    pwm_imgs=[]
+    pwm_canvases=[]
+    x=440
+    y=430
+    for i in range(1,22):
+        img=PhotoImage(file="Imagenes/image_part_0"+str(i)+".png")
+        pwm_imgs.append(img)
+        canvas=Lienzo.create_image(x+14*i,y,image = "",anchor = NW)
+        pwm_canvases.append(canvas)
+
     global on
     global off
     global luz_img
-    
     on= PhotoImage(file="Imagenes/on.png")
     off= PhotoImage(file="Imagenes/off.png")
+
     bat_lienzo=Lienzo.create_image(40,195,image = bat_img ,anchor = NW)
     luz_img=Lienzo.create_image(60,240,image = on ,anchor = NW)
 
@@ -95,18 +103,7 @@ def main_test_drive(ventana,nombre, nacionalidad, escuderia, piloto_img, pais_im
     piloto=Lienzo.create_image(40,50,image = piloto_img ,anchor = NW)
     pais=Lienzo.create_image(120,70,image = pais_img ,anchor = NW)
 
-    global btlv
-    global ll
-    global lr
-    global lf
-    global lb
-    global dr
-    dr=0
-    ll=1
-    lr=1
-    lf=1
-    lb=1
-    btlv=100
+
 
     global lucesf
     lucesf = Label(Lienzo,text="  A  ",font=('Agency FB',18),bg='white',fg='black')
@@ -123,7 +120,21 @@ def main_test_drive(ventana,nombre, nacionalidad, escuderia, piloto_img, pais_im
     global lucesr
     lucesr = Label(Lienzo,text="  A  ",font=('Agency FB',18),bg='yellow',fg='black')
     lucesr.place(x=665,y=95)
-        
+
+
+    global btlv
+    global ll
+    global lr
+    global lf
+    global lb
+    global dr
+    dr=0
+    ll=1
+    lr=1
+    lf=1
+    lb=1
+    btlv=100
+    
     thread_telemetria=Thread(target=enviar_mensajes,args=["indeciso;",0])
     thread_telemetria.start()
 
@@ -135,18 +146,19 @@ def main_test_drive(ventana,nombre, nacionalidad, escuderia, piloto_img, pais_im
 #funcion para acelerar de 50 en 50, que muestra la potencia en pantalla
 def aceleracion():
     global potencia
-    global pwm
     if potencia<=1000:
         potencia+=50
-        pwm.config(text= "pwm: "+str(potencia))
         Thread(target=enviar_mensajes,args=(["pwm:",potencia])).start()
-
+        indice=potencia//50-1
+        Lienzo.itemconfig(pwm_canvases[indice],image=pwm_imgs[indice])
+    
 def send_reversa():
     global potencia
     potencia=0    
     Thread(target=enviar_mensajes,args=(["pwm:",potencia])).start()
-    global pwm
-    pwm.config(text= "pwm: 0")
+    for i in range(21):
+        Lienzo.itemconfig(pwm_canvases[i],image="")
+        
 
 def luces_frontales():
     global lf
@@ -281,7 +293,7 @@ def cambios(texto,inicial):
     elif texto=="lb:":
         variable=lb
     elif texto== "pwm:":
-        variable = pwm
+        variable = potencia
     elif texto== "dir:":
         variable = dr
     if str(inicial)!=str(variable):
