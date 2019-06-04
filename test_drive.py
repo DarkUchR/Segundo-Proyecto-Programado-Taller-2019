@@ -137,7 +137,10 @@ def main_test_drive(ventana,nombre, nacionalidad, escuderia, piloto_img, pais_im
     
     thread_telemetria=Thread(target=enviar_mensajes,args=["indeciso;",0])
     thread_telemetria.start()
-
+    root.bind('<Up>', aceleracion)
+    root.bind('<Left>', izquierda)
+    root.bind('<Right>', derecha)
+    root.bind('<Down>', send_reversa)
     root.protocol("WM_DELETE_WINDOW", _delete_window)
     root.mainloop()
 

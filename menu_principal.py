@@ -8,6 +8,7 @@ from threading import Thread
 import winsound
 import threading
 import time
+from tkinter.filedialog import askopenfilename
 from about import main_about
 from menu_pilotos import main_menu_pilotos
 
@@ -26,20 +27,19 @@ principal.resizable(width=NO,height=NO)
 canvas = Canvas(principal, width=1200, height=900, bg="White")
 canvas.place(x=0, y=0)    #Colocar canvas
 
-
+escuderia_file= open("Escuderia.txt","r")
+escuderia=escuderia_file.readlines()
+escuderia_file.close
 #Imagenes en pantalla de inicio
-fondo = PhotoImage(file = "fondo1.gif")
+fondo = PhotoImage(file = "Imagenes/fondo1.gif")
 #recorte_2 = fondo.subsample(x=2, y=2)
 canvas.create_image(0,0, anchor= NW, image= fondo)
-logo_esc = PhotoImage(file= "BMW.png")
-recorte = logo_esc.subsample(x=2, y=2)
-canvas.create_image(10,450, anchor= NW, image= recorte)
-pat1 = PhotoImage(file = "michelin.png")
-rec1 = pat1.subsample(x=3, y=3)
-canvas.create_image(350, 20, anchor= NW, image= rec1)
-pat2 = PhotoImage(file = "pirelli.gif")
-canvas.create_image(350, 145, anchor= NW, image= pat2)
-
+logo_esc = PhotoImage(file= escuderia[0][:-1])
+logo_canvas=canvas.create_image(10,450, anchor= NW, image= logo_esc)
+pat1 = PhotoImage(file = escuderia[1][:-1])
+pat1_canvas=canvas.create_image(350, 20, anchor= NW, image= pat1)
+pat2 = PhotoImage(file = escuderia[2][:-1])
+pat2_canvas=canvas.create_image(350, 20+pat1.height(), anchor= NW, image= pat2)
 
 def leave():
     global animation_Flag
@@ -67,7 +67,53 @@ def cambiar_about():
     leave()
     main_about(principal)
     return_principal()
- 
+
+def cambiar_pat1():
+    archivo=cambiar_img(1)
+    if archivo!="Error":
+        global pat1
+        pat1 = PhotoImage(file= archivo)
+        canvas.itemconfig(pat1_canvas,image=pat1)
+        update()
+def cambiar_pat2():
+    archivo=cambiar_img(2)
+    if archivo!="Error":
+        global pat2
+        pat2 = PhotoImage(file= archivo)
+        canvas.itemconfig(pat2_canvas,image=pat2)
+        update()
+
+def update():
+    canvas.coords(pat2_canvas,350,20+pat1.height())
+    canvas.coords(indices1,350,20+pat1.height()+pat2.height())
+    canvas.coords(indices2,350,20+pat1.height()+pat2.height()+20)
+    canvas.coords(indices3,350,20+pat1.height()+pat2.height()+40)
+def cambiar_logo():
+    archivo=cambiar_img(0)
+    if archivo!="Error":
+        global logo_esc
+        logo_esc = PhotoImage(file= archivo)
+        canvas.itemconfig(logo_canvas,image=logo_esc)
+
+def cambiar_img(valor):
+    filename = askopenfilename()
+    if filename[-3:]!="gif" and filename[-3:]!="png":
+        messagebox.showinfo("Error","La entrada debe ser una imagen en formato gif o png")
+        return "Error"
+    else:
+        img = PhotoImage(file= filename)
+        if img.width()>300 or img.height()>300:
+            messagebox.showinfo("Error","La imagen es muy grande")
+            return "Error"
+        else:
+            escuderia_file= open("Escuderia.txt","r")
+            escuderia=escuderia_file.readlines()
+            escuderia[valor]=filename+"\n"
+            escuderia_file.close()
+            escuderia_file= open("Escuderia.txt","w")
+            escuderia_file.writelines(escuderia)
+            escuderia_file.close()
+            return filename    
 
 #Botones que direccionan a las demas pantallas
 about = Button(canvas, font=("Arial", 12), text="About", width=8, bg="grey", fg="Black", command=cambiar_about)#, command=)
@@ -75,6 +121,12 @@ about.place(x=650, y=625)
 posiciones = Button(canvas, font=("Arial", 12), text="Seleccionar Piloto", bg="grey", fg="Black", command=cambiar_pilotos)#, command=)
 posiciones.place(x=300, y=625)
 
+pat1_change = Button(canvas, font=("Arial", 10), text="Cambiar Patrocinador 1", bg="#a3a3a3", fg="Black", command=cambiar_pat1)#, command=)
+pat1_change.place(x=10, y=632)
+pat2_change = Button(canvas, font=("Arial", 10), text="Cambiar Patrocinador 2", bg="#a3a3a3", fg="Black", command=cambiar_pat2)#, command=)
+pat2_change.place(x=10, y=664)
+logo = Button(canvas, font=("Arial", 10), text="Cambiar Logo",  bg="#a3a3a3", fg="Black", command=cambiar_logo)#, command=)
+logo.place(x=10, y=600)
 
 
 logo_prin = PhotoImage(file= "formula1.png")
@@ -88,9 +140,9 @@ canvas.create_text(12, 175,text="Pilotos Asociados: ", font=("Montserrat-Regular
 canvas.create_text(10, 275,text="Ubicación Geográfica: \nHinwil-Suiza \nMúnich-Alemania", font=("Montserrat-Regular",14),fill= "White", anchor=NW)
 canvas.create_text(12, 355,text="Pilotos Disponibles: ", font=("Montserrat-Regular",14),fill= "White", anchor=NW)
 canvas.create_text(355, 0,text="Patrocinadores: ", font=("Montserrat-Regular",14),fill= "White", anchor=NW)
-canvas.create_text(350, 225,text="Índices de escudería: ", font=("Montserrat-Regular",14), fill= "White", anchor=NW)
+indices1=canvas.create_text(350, 20+pat1.height()+pat2.height(),text="Índices de escudería: ", font=("Montserrat-Regular",14), fill= "White", anchor=NW)
 canvas.create_text(735, 50,text="Historico de atomóviles: ", font=("Montserrat-Regular",14),fill= "White", anchor=NW)
-canvas.create_text(350, 245,text="Índice Ganador de Escudería: ", font=("Montserrat-Regular",14), fill= "White", anchor=NW)
+indices2=canvas.create_text(350, 20+pat1.height()+pat2.height()+20,text="Índice Ganador de Escudería: ", font=("Montserrat-Regular",14), fill= "White", anchor=NW)
 canvas.create_text(735, 225,text="Vehículos Disponibles: ", font=("Montserrat-Regular",14), fill= "White", anchor=NW)
 img = canvas.create_image(0, 0, image= reduc, anchor= NW)
 
@@ -104,18 +156,11 @@ AH = "BT49 \nBT50 \nBMW-269 \nBMW316i"
 PD = "Franklin Wart"
 AC = "2019"
 IGE = "0,89"
-archivo = open("configurables.txt","w")
-archivo.write(PA)
-archivo.write(AH)
-archivo.write(PD)
-archivo.write(AC)
-archivo.write(IGE)
-canvas.create_text(350, 265,text= str(IGE), font=("Montserrat-Regular",14), fill= "Dark Blue", anchor=NW)
+indices3=canvas.create_text(350, 20+pat1.height()+pat2.height()+40,text= str(IGE), font=("Montserrat-Regular",14), fill= "Dark Blue", anchor=NW)
 canvas.create_text(940, 11, text = str(AC), font=("Montserrat-Regular",14),fill= "Light Green", anchor=NW)
 canvas.create_text(12, 380, text = str(PD), font=("Montserrat-Regular",14),fill= "Dark Blue", anchor=NW)
 canvas.create_text(725, 125, text = str(AH), font=("Montserrat-Regular",14),fill= "Dark Blue", anchor=NW)
 canvas.create_text(10, 200, text = str(PA), font=("Montserrat-Regular",14),fill= "Dark Blue", anchor=NW)
-archivo.close()
 
 
 #Funciones
@@ -127,7 +172,7 @@ def logo_f1():
     x= 0
     y= 0
     mov_x = 5
-    while animation_Flag and x>=0:
+    while animation_Flag:
         x += mov_x
         try:
             canvas.move(img,mov_x,y)
