@@ -671,6 +671,23 @@ def editar_piloto_ventana(piloto,piloto_ind):
             messagebox.showinfo("Error","Hay incoherencia en las participaciones del piloto")
             return
         else:
+            #Se actualiza informacion de escuderia BMW
+            escuderia_file= open("Escuderia.txt","r")
+            escuderia=escuderia_file.readlines()
+            escuderia_file.close()
+            if piloto[4][:3]=="BMW":
+                indice=int(piloto[4][-2:-1])-1
+                escuderia[3+indice]=nombre+"\n"
+                if escuderia[8+indice]!="\n":
+                    escuderia[8+indice]=nombre+"\n"
+                won=int(escuderia[6][:-1])-int(piloto[6][:-1])+ganados
+                played=int(escuderia[7][:-1])-int(piloto[5][:-1])+competencias
+                escuderia[6]=str(won)+"\n"
+                escuderia[7]=str(played)+"\n"
+                escuderia_file= open("Escuderia.txt","w")
+                escuderia_file.writelines(escuderia)
+                escuderia_file.close()      
+            
             piloto[0]=nombre+"\n"
             piloto[2]=str(edad)+"\n"
             piloto[3]=pais+"\n"
@@ -771,6 +788,28 @@ def editar_carro_ventana(carro,carro_ind):
         if error:
             pass
         else:
+            #Se actualiza la informacion del BMW
+            escuderia_file= open("Escuderia.txt","r")
+            escuderia=escuderia_file.readlines()
+            escuderia_file.close()
+            if data[4][:3]=="BMW":
+            
+                indice=int(data[4][-2:-1])-1
+                nombre_data=data[2][:-1]+" "+data[3][:-1]
+                nombre_carro=carro[2][:-1]+" "+carro[3][:-1]
+                if nombre_carro!=nombre_data:
+                    escuderia[5]=escuderia[5][:-1]+"/"+nombre_carro+"\n"
+                if data[9][:-1]=="Disponible":
+                    escuderia[10+indice]=nombre_data+"\n"
+                    escuderia[8+indice]=pilotos[carro_ind][0]
+                else:
+                    escuderia[10+indice]="\n"
+                    escuderia[8+indice]="\n"
+                escuderia_file= open("Escuderia.txt","w")
+                escuderia_file.writelines(escuderia)
+                escuderia_file.close()
+
+                
             for i in range(14):
                 carro[i]=data[i]
             print(carro)

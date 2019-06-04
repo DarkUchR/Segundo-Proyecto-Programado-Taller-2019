@@ -56,10 +56,13 @@ def return_principal():
         escuderia=escuderia_file.readlines()
         escuderia_file.close
         PA = escuderia[3][:-1]+"\n" +escuderia[4][:-1]
-        AH = escuderia[5][:-1]
-        PD = escuderia[7][:-1]+"\n" +escuderia[8][:-1]
-        IGE = escuderia[6][:-1]
-        VD= escuderia[9][:-1]+"\n" +escuderia[10][:-1]
+        AH0 = escuderia[5][:-1]
+        AH=""
+        for modelo in AH0.split("/"):
+            AH+=modelo+"\n";
+        PD = escuderia[8][:-1]+"\n" +escuderia[9][:-1]
+        IGE = str(int(escuderia[6][:-1])*100//int(escuderia[7][:-1]))
+        VD= escuderia[10][:-1]+"\n" +escuderia[11][:-1]
         canvas.itemconfig(vd_canvas,text= VD)
         canvas.itemconfig(indices3,text= IGE)
         canvas.itemconfig(pd_canvas, text =PD)
@@ -156,7 +159,7 @@ canvas.create_text(10, 275,text="Ubicación Geográfica: \nHinwil-Suiza \nMúnic
 canvas.create_text(12, 355,text="Pilotos Disponibles: ", font=("Montserrat-Regular",14),fill= "White", anchor=NW)
 canvas.create_text(355, 0,text="Patrocinadores: ", font=("Montserrat-Regular",14),fill= "White", anchor=NW)
 indices1=canvas.create_text(350, 20+pat1.height()+pat2.height(),text="Índices de escudería: ", font=("Montserrat-Regular",14), fill= "White", anchor=NW)
-canvas.create_text(735, 50,text="Historico de atomóviles: ", font=("Montserrat-Regular",14),fill= "White", anchor=NW)
+canvas.create_text(735, 50,text="Historico de automóviles: ", font=("Montserrat-Regular",14),fill= "White", anchor=NW)
 indices2=canvas.create_text(350, 20+pat1.height()+pat2.height()+20,text="Índice Ganador de Escudería: ", font=("Montserrat-Regular",14), fill= "White", anchor=NW)
 canvas.create_text(735, 225,text="Vehículos Disponibles: ", font=("Montserrat-Regular",14), fill= "White", anchor=NW)
 img = canvas.create_image(0, 0, image= reduc, anchor= NW)
@@ -168,15 +171,18 @@ canvas.create_line(650, 45, 650, 600, fill="#000000", dash=(7, 4))
 #Creación de archivo de texto para trabajar los datos configurables
 
 PA = escuderia[3][:-1]+"\n" +escuderia[4][:-1]
-AH = escuderia[5][:-1]
-PD = escuderia[7][:-1]+"\n" +escuderia[8][:-1]
+AH0 = escuderia[5][:-1]
+AH=""
+for modelo in AH0.split("/"):
+    AH+=modelo+"\n";
+PD = escuderia[8][:-1]+"\n" +escuderia[9][:-1]
 AC = "2019"
-IGE = escuderia[6][:-1]
-VD= escuderia[9][:-1]+"\n" +escuderia[10][:-1]
+IGE = str(int(escuderia[6][:-1])*100//int(escuderia[7][:-1]))
+VD= escuderia[10][:-1]+"\n" +escuderia[11][:-1]
 indices3=canvas.create_text(350, 20+pat1.height()+pat2.height()+40,text= str(IGE), font=("Montserrat-Regular",14), fill= "Dark Blue", anchor=NW)
 canvas.create_text(940, 11, text = str(AC), font=("Montserrat-Regular",14),fill= "Light Green", anchor=NW)
 pd_canvas=canvas.create_text(12, 380, text = str(PD), font=("Montserrat-Regular",14),fill= "Dark Blue", anchor=NW)
-ah_canvas=canvas.create_text(725, 125, text = str(AH), font=("Montserrat-Regular",14),fill= "Dark Blue", anchor=NW)
+ah_canvas=canvas.create_text(735, 75, text = str(AH), font=("Montserrat-Regular",14),fill= "Dark Blue", anchor=NW)
 pa_canvas=canvas.create_text(10, 200, text = str(PA), font=("Montserrat-Regular",14),fill= "Dark Blue", anchor=NW)
 vd_canvas=canvas.create_text(735, 245, text = str(VD), font=("Montserrat-Regular",14),fill= "Dark Blue", anchor=NW)
 
