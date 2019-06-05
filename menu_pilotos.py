@@ -345,7 +345,7 @@ def leftclick(event):
     y = get_mousey()
     if  1<x<920:
         for i in range(22):
-            if 40+78*i<y<32+78*(i+1) and poder_elegir:
+            if 40+78*i<y<32+78*(i+1) and poder_elegir and get_mousey_root()>20:
                 if (canvas==1 and canvas_ventana1.itemcget(rectangulos1[i], "fill")=="#b5b5bc") or (canvas==2 and canvas2_ventana1.itemcget(rectangulos2[i], "fill")=="#b5b5bc"):
                     deshabilitar_eleccion(i)
                 elif carros[i][9][:-1]!="Disponible":
@@ -425,7 +425,14 @@ def get_mousey():
             return canvas2_ventana1.winfo_pointery() - canvas2_ventana1.winfo_rooty()+scrollbar2.get()[0]*(1800)
     except:
         return 0
-
+def get_mousey_root():
+    try:
+        if canvas==1:
+            return canvas_ventana1.winfo_pointery() - canvas_ventana1.winfo_rooty()
+        else:
+            return canvas2_ventana1.winfo_pointery() - canvas2_ventana1.winfo_rooty()
+    except:
+        return 0    
 
 def cambiar_test():
     leave()
