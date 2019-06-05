@@ -90,9 +90,13 @@ def main_menu_pilotos(root):
         caras2= [cargar_imagen(carro[0][:-1]+".png")]+caras2
         imagen_cara2 = canvas2_ventana1.create_image(510,40+78*i,image = caras2[0] ,anchor = NW)
         imagen_bar2 = canvas2_ventana1.create_image(30,110+78*i,image = bar ,anchor = NW)
-        
-        imagen_marca= canvas2_ventana1.create_text((285,65+78*i),font=("Arial",15), text=carro[2],anchor = NW)
-        imagen_modelo= canvas2_ventana1.create_text((384,65+78*i),font=("Arial",15),text=carro[3],anchor = NW)
+        if carro[9][:-1]!="Disponible":        
+            imagen_marca= canvas2_ventana1.create_text((285,65+78*i),font=("Arial",15), text=carro[2],anchor = NW,fill="red")
+            imagen_modelo= canvas2_ventana1.create_text((384,65+78*i),font=("Arial",15),text=carro[3],anchor = NW,fill="red")
+        else:
+            imagen_marca= canvas2_ventana1.create_text((285,65+78*i),font=("Arial",15), text=carro[2],anchor = NW,fill="green")
+            imagen_modelo= canvas2_ventana1.create_text((384,65+78*i),font=("Arial",15),text=carro[3],anchor = NW,fill="green")
+            
         imagen_temporada= canvas2_ventana1.create_text((650,65+78*i),font=("Arial",15), text=carro[5],anchor = NW)
         imagen_eficiencia= canvas2_ventana1.create_text((805,65+78*i),font=("Arial",15),text=carro[12],anchor = NW)
         carro+=[imagen_carro2,imagen_cara2,imagen_marca,imagen_modelo, imagen_temporada, imagen_eficiencia]
@@ -107,13 +111,16 @@ def main_menu_pilotos(root):
         carros1= [cargar_imagen(piloto[4][:-1]+".png")]+carros1
         imagen_carro1=canvas_ventana1.create_image(480,55+78*i,image = carros1[0] ,anchor = NW)
         caras1= [cargar_imagen(piloto[1][:-1]+".png")]+caras1
-        imagen_cara1 = canvas_ventana1.create_image(70,40+78*i,image = caras1[0] ,anchor = NW)
+        imagen_cara1 = canvas_ventana1.create_image(70,40+78*i,image = caras1[0],anchor = NW)
         paises1= [cargar_imagen(piloto[3][:-1]+".png")]+paises1
         imagen_pais1 = canvas_ventana1.create_image(370,55+78*i,image = paises1[0] ,anchor = NW)
         imagen_bar1 = canvas_ventana1.create_image(30,110+78*i,image = bar ,anchor = NW)
         
         imagen_edad= canvas_ventana1.create_text((295,65+78*i),font=("Arial",15), text=piloto[2],anchor = NW)
-        imagen_nombre= canvas_ventana1.create_text((150,65+78*i),font=("Arial",15),text=piloto[0],anchor = NW)
+        if carro[9][:-1]!="Disponible":
+            imagen_nombre= canvas_ventana1.create_text((150,65+78*i),font=("Arial",15),text=piloto[0], fill="red",anchor = NW)
+        else:
+            imagen_nombre= canvas_ventana1.create_text((150,65+78*i),font=("Arial",15),text=piloto[0], fill="green",anchor = NW)
         imagen_competencias= canvas_ventana1.create_text((680,65+78*i),font=("Arial",15), text=piloto[5],anchor = NW)
         imagen_rgp= canvas_ventana1.create_text((805,65+78*i),font=("Arial",15),text=piloto[10],anchor = NW)
         imagen_rep= canvas_ventana1.create_text((890,65+78*i),font=("Arial",15), text=piloto[11],anchor = NW)
@@ -202,13 +209,22 @@ def actualizar():
     global paises
     paises=[]
     for i in range(len(pilotos)):
+        if carros[i][9][:-1]!="Disponible":
+            canvas_ventana1.itemconfig(pilotos[i][16],fill="red")
+            canvas2_ventana1.itemconfig(carros[i][16],fill="red")
+            canvas2_ventana1.itemconfig(carros[i][17],fill="red")
+        else:
+            canvas_ventana1.itemconfig(pilotos[i][16],fill="green")
+            canvas2_ventana1.itemconfig(carros[i][16],fill="green")
+            canvas2_ventana1.itemconfig(carros[i][17],fill="green")
+            
         canvas_ventana1.coords(pilotos[i][12],480,55+78*i)
         canvas_ventana1.coords(pilotos[i][13],70,40+78*i)
         canvas_ventana1.coords(pilotos[i][14],370,55+78*i)
         paises= [cargar_imagen(pilotos[i][3][:-1]+".png")]+paises
         canvas_ventana1.itemconfig(pilotos[i][14],image=paises[0])
         canvas_ventana1.coords(pilotos[i][15],295,65+78*i)
-        canvas_ventana1.itemconfig(pilotos[i][15],text=pilotos[i][2])
+        canvas_ventana1.itemconfig(pilotos[i][15],text=pilotos[i][2])            
         canvas_ventana1.coords(pilotos[i][16],150,65+78*i)
         canvas_ventana1.itemconfig(pilotos[i][16],text=pilotos[i][0])
         canvas_ventana1.coords(pilotos[i][17],680,65+78*i)
@@ -217,7 +233,6 @@ def actualizar():
         canvas_ventana1.itemconfig(pilotos[i][18],text=pilotos[i][10])
         canvas_ventana1.coords(pilotos[i][19],890,65+78*i)
         canvas_ventana1.itemconfig(pilotos[i][19],text=pilotos[i][11])
-        
         canvas2_ventana1.coords(carros[i][14],70,55+78*i)
         canvas2_ventana1.coords(carros[i][15],510,40+78*i)
         canvas2_ventana1.coords(carros[i][16],285,65+78*i)
@@ -333,10 +348,12 @@ def leftclick(event):
             if 40+78*i<y<32+78*(i+1) and poder_elegir:
                 if (canvas==1 and canvas_ventana1.itemcget(rectangulos1[i], "fill")=="#b5b5bc") or (canvas==2 and canvas2_ventana1.itemcget(rectangulos2[i], "fill")=="#b5b5bc"):
                     deshabilitar_eleccion(i)
+                elif carros[i][9][:-1]!="Disponible":
+                    deshabilitar_eleccion(pilot_waiting)
+                    messagebox.showinfo("Error","El piloto/carro seleccionado no esta disponible")
                 else:
                     deshabilitar_eleccion(pilot_waiting)
                     habilitar_eleccion(i)
-            
                     
 def habilitar_eleccion(indice_rectangulo):
     global pilot_selected
@@ -445,7 +462,8 @@ def return_menu_pilotos(carro_ind):
         btlv=get_btlv()
         if btlv!=-1 and btlv<70:
             carro=carros[carro_ind]
-            carro[9]="Descargado\n"
+            carro[9]="Descargado\n"            
+            verificar_escuderia(carro)
             if canvas==1:
                 actualizar_carros(carro,carro_ind,canvas_ventana1)
             else:
@@ -460,7 +478,18 @@ def return_menu_pilotos(carro_ind):
     except:
         pass
      
-    
+def verificar_escuderia(carro):
+    escuderia_file= open("Escuderia.txt","r")
+    escuderia=escuderia_file.readlines()
+    escuderia_file.close()
+    if carro[4][:3]=="BMW":
+        indice=int(carro[4][-2:-1])-1
+        escuderia[10+indice]="\n"
+        escuderia[8+indice]="\n"
+        escuderia_file= open("Escuderia.txt","w")
+        escuderia_file.writelines(escuderia)
+        escuderia_file.close()
+        
 def cambiar_menu_carros():
     global canvas
     if pilot_waiting>=0:
