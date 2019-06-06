@@ -267,8 +267,12 @@ def centro():
     
 def mover_especial():
     cola.append("indeciso;")
-    
+
+
 def celebrar():
+    Thread(target=celebrar_aux,args=()).start()
+
+def celebrar_aux():
     global especial
     especial=especial.split(";")
     global ll
