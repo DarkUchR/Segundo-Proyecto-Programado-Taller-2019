@@ -131,8 +131,8 @@ def main_test_drive(ventana,nombre, nacionalidad, escuderia, piloto_img, pais_im
     global lb
     global dr
     dr=0
-    ll=0
-    lr=0
+    ll=1
+    lr=1
     lf=0
     lb=0
     btlv=100
@@ -161,7 +161,7 @@ def aceleracion():
         indice=potencia//50
         if indice<=0:
             if indice==0:
-                lb=0
+                lb=1
                 luces_traseras()
             indice=abs(indice)
             Lienzo.itemconfig(pwm_canvases[indice],image="")
@@ -180,7 +180,7 @@ def send_reversa():
             Lienzo.itemconfig(pwm_canvases[indice],image="")
         else:
             if indice==-1:
-                lb=1
+                lb=0
                 luces_traseras()
             indice=abs(indice)-1
             Lienzo.itemconfig(pwm_canvases[indice],image=pwm_imgs[indice])
@@ -374,7 +374,7 @@ def delete(mensaje):
     result=[]
     for msg in cola:
         if msg!=mensaje:
-            result.apend(msg)
+            result.append(msg)
     return result
     
     
