@@ -209,7 +209,7 @@ def luces_izquierda():
     if ll==1:
         ll=0
         lucesl.config(text="  E  ")
-        actualizar_luces_izquierda()
+        Thread(target=actualizar_luces_izquierda,args=()).start()
 
     else:
         ll=1
@@ -221,7 +221,7 @@ def luces_derecha():
     if lr==1:
         lr=0
         lucesr.config(text="  E  ")
-        actualizar_luces_derecha()
+        Thread(target=actualizar_luces_derecha,args=()).start()
 
     else:
         lr=1
@@ -298,16 +298,17 @@ def telemetria():
         recepcion= enviar_mensajes("sense;")
         if recepcion[1]:
             sense=recepcion[0]
+            print(sense)
             btlv=int(sense.split(";")[0][5:])
             luz= sense.split(";")[1][4:]
-            
+            print(luz)
             if luz=="1":
                 Lienzo.itemconfig(luz_img,image = on)
             else:
                 Lienzo.itemconfig(luz_img,image = off)
             if btlv>=0:
-                Lienzo.coords(bat,45, 200,45+(42/btlv),200+18)
-                Lienzo.itemconfig(bat_text,text=str(btlv)+"%")
+                Lienzo.coords(bat,45, 200,45+(42*btlv/100),200+18)
+                bat_text.configure(text=str(btlv)+"%")
                 if btlv == 100:
                     Lienzo.itemconfig(bat,fill="green",outline="green")
                 elif 74<btlv<100:
@@ -350,7 +351,9 @@ def enviar_mensajes(mensaje, fuente="no-cola"):
     msg_recibido="-1"
     while not(recibido) and errores<5 and carro.loop:
         ide = carro.send(mensaje)
+        msg_recibido ="-1"
         while msg_recibido =="-1" and carro.loop:
+            print(msg_recibido)
             msg_recibido = carro.readById(ide)
             time.sleep(0.200)
         if msg_recibido=="ok" or msg_recibido[0:4]=="blvl":

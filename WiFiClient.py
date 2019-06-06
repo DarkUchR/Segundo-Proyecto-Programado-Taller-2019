@@ -206,7 +206,10 @@ class NodeMCU(Thread):
                subi = int(subi)
                if(i<len(self.log)):
                     try:
-                        response = self.log[i][1].split(";")[subi]
+                        if self.log[i][1][:4]=="blvl":
+                            response=self.log[i][1]
+                        else:
+                            response = self.log[i][1].split(";")[subi]
                     except:
                         response= self.log[i][1]
                else:
