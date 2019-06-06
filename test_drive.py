@@ -53,7 +53,7 @@ def main_test_drive(ventana,nombre, nacionalidad, escuderia, piloto_img, pais_im
     Der.place(x=910,y=100)
     Celeb = Button(Lienzo,text='Celebrar',command= celebrar, fg='white',bg='black', font=('Agency FB',14))
     Celeb.place(x=840,y=300)
-    Mov = Button(Lienzo,text='Mov.Especial',command= mov_especial, fg='white',bg='black', font=('Agency FB',14))
+    Mov = Button(Lienzo,text='Mov.Especial',command= mover_especial, fg='white',bg='black', font=('Agency FB',14))
     Mov.place(x=822,y=350)
     LuzF = Button(Lienzo,text='Luz Frontal',command= luces_frontales, fg='white',bg='black', font=('Agency FB',14))
     LuzF.place(x=770,y=180)
@@ -131,10 +131,10 @@ def main_test_drive(ventana,nombre, nacionalidad, escuderia, piloto_img, pais_im
     global lb
     global dr
     dr=0
-    ll=1
-    lr=1
-    lf=1
-    lb=1
+    ll=0
+    lr=0
+    lf=0
+    lb=0
     btlv=100
     cola=[]
 
@@ -187,20 +187,20 @@ def send_reversa():
 
 def luces_frontales():
     global lf
-    if lf==1:
-        lf=0
+    if lf==0:
+        lf=1
         lucesf.config(text="  E  ")
     else:
-        lf=1
+        lf=0
         lucesf.config(text="  A  ")
     cola.append("lf:")
 def luces_traseras():
     global lb
-    if lb==1:
-        lb=0
+    if lb==0:
+        lb=1
         lucesb.config(text="  E  ")
     else:
-        lb=1
+        lb=0
         lucesb.config(text="  A  ")
     cola.append("lb:")
     
@@ -222,7 +222,6 @@ def luces_derecha():
         lr=0
         lucesr.config(text="  E  ")
         Thread(target=actualizar_luces_derecha,args=()).start()
-
     else:
         lr=1
         lucesr.config(text="  A  ")
@@ -237,7 +236,7 @@ def actualizar_luces_derecha():
         else:
             luz=1
 
-    enviar_mensajes("lr:1;")
+    enviar_mensajes("lr:0;")
 
 
 def actualizar_luces_izquierda():
@@ -249,7 +248,7 @@ def actualizar_luces_izquierda():
             luz=0
         else:
             luz=1
-    enviar_mensajes("ll:1;")
+    enviar_mensajes("ll:0;")
             
 def izquierda():
     global dr
@@ -266,10 +265,11 @@ def centro():
     dr=0
     cola.append("dir:")
     
-def mov_especial():
+def mover_especial():
     cola.append("indeciso;")
     
 def celebrar():
+    global especial
     especial=especial.split(";")
     global ll
     global lr
@@ -277,7 +277,7 @@ def celebrar():
     lr=1
     for comando in especial:
         if comando[0:1]=="w":
-            time.sleep(comando[1:])
+            time.sleep(int(comando[1:]))
         elif comando[0:2]=="ll":
             luces_izquierda()
         elif comando[0:2]=="lr":
@@ -308,7 +308,7 @@ def telemetria():
                 Lienzo.itemconfig(luz_img,image = off)
             if btlv>=0:
                 Lienzo.coords(bat,45, 200,45+(42*btlv/100),200+18)
-                bat_text.configure(text=str(btlv)+"%")
+                bat_text.configure(text=(str(btlv)+"%"))
                 if btlv == 100:
                     Lienzo.itemconfig(bat,fill="green",outline="green")
                 elif 74<btlv<100:
