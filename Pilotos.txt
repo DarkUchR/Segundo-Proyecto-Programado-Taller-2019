@@ -17,7 +17,7 @@ BMW I Andrettu Motosport 1
 12
 2
 1
-lr:1;ll:1;pwm:560;w2;pwm:0;lr:0;ll:0;dir:0;lb:0;lf:
+lr:1;ll:1;pwm:-560;w2;pwm:0;lr:0;ll:0;dir:0;lb:0;lf:
 Noah Accola
 10
 30
