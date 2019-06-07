@@ -350,22 +350,24 @@ def leftclick(event):
                     deshabilitar_eleccion(i)
                 elif carros[i][9][:-1]!="Disponible":
                     deshabilitar_eleccion(pilot_waiting)
-                    messagebox.showinfo("Error","El piloto/carro seleccionado no esta disponible")
+                    habilitar_eleccion(i,"no disponible")
                 else:
                     deshabilitar_eleccion(pilot_waiting)
                     habilitar_eleccion(i)
                     
-def habilitar_eleccion(indice_rectangulo):
+def habilitar_eleccion(indice_rectangulo, disponibilidad="disponible"):
     global pilot_selected
     global pilot_waiting
     if canvas==1:
         canvas_ventana1.itemconfig(rectangulos1[indice_rectangulo], fill="#b5b5bc")
-        run1_button.config(state="normal")
         edit1_button.config(state="normal")
+        if disponibilidad=="disponible":
+            run1_button.config(state="normal")
     elif canvas==2:
         canvas2_ventana1.itemconfig(rectangulos2[indice_rectangulo], fill="#b5b5bc")
-        run2_button.config(state="normal")
         edit2_button.config(state="normal")
+        if disponibilidad=="disponible":
+            run2_button.config(state="normal")
     pilot_selected=True
     pilot_waiting=indice_rectangulo                   
 

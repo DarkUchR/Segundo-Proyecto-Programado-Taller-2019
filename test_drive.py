@@ -38,6 +38,8 @@ def main_test_drive(ventana,nombre, nacionalidad, escuderia, piloto_img, pais_im
     global potencia
     potencia=0
 
+    global sent_error
+    sent_error=False
     
     #boton para acelerar
     Acelerar = Button(Lienzo,text='Acelerar',command= aceleracion, fg='white',bg='black', font=('Agency FB',14))
@@ -353,6 +355,7 @@ def enviar_mensajes(mensaje, fuente="no-cola"):
     errores=0
     recibido=False
     msg_recibido="-1"
+    global sent_error
     while not(recibido) and errores<5 and carro.loop:
         ide = carro.send(mensaje)
         msg_recibido ="-1"
@@ -364,7 +367,8 @@ def enviar_mensajes(mensaje, fuente="no-cola"):
             recibido=True
         else:
             errores+=1
-    if errores==5 and fuente=="cola":
+    if errores==5 and fuente=="cola" and not(sent_error):
+        sent_error=True
         messagebox.showinfo("Error","Error de comunicacion con el carro")             
         regresar_test_drive()
     else:
