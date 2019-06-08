@@ -400,7 +400,7 @@ def edit():
         scrollbar.pack_forget()
     elif canvas==2:
         canvas2_ventana1.pack_forget()
-        scrollbar.pack_forget()
+        scrollbar2.pack_forget()
     animationFlag=False
     if canvas==1:    
         editar_piloto_ventana(pilotos[pilot_waiting],pilot_waiting)
