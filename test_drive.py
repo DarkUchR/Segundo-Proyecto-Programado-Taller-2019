@@ -435,7 +435,6 @@ def enviar_mensajes(mensaje, fuente="no-cola"):
         msg_recibido ="-1"
         #Mientras que no halla recibido respuesta y el tiempo de espera del carro no halla transcurrid, se fija si ha llegado respuesta
         while msg_recibido =="-1" and carro.loop:
-            print(msg_recibido)
             msg_recibido = carro.readById(ide)
             time.sleep(0.200)
         #Si se recibio mensaje entonces recibido se hace True

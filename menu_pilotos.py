@@ -1015,7 +1015,6 @@ def editar_carro_ventana(carro,carro_ind):
             #Se actualiza la informacion del carro    
             for i in range(14):
                 carro[i]=data[i]
-            print(carro)
             actualizar_carros(carro,carro_ind, canvas4_ventana1)
     #E:-
     #S:-
